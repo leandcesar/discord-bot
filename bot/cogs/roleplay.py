@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import disnake
 from disnake.ext import commands
 
@@ -9,6 +8,7 @@ from bot.services import pil
 class RoleplayCog(commands.Cog):
     @commands.slash_command(name="metadinha", description="faça metadinha com alguém")
     async def command_match(
+        self,
         inter: disnake.ApplicationCommandInteraction,
         member: disnake.Member = commands.Param(name="usuário", description="usuário pra fazer metadinha"),
         vertical: bool
@@ -33,7 +33,7 @@ class RoleplayCog(commands.Cog):
 
     @commands.cooldown(rate=3, per=30)
     @commands.slash_command(name="fake", description="finja ser algo ou alguém")
-    async def command_message(
+    async def command_fake(
         self,
         inter: disnake.ApplicationCommandInteraction,
         content: str = commands.Param(name="mensagem", description="mensagem para enviar fingindo ser alguém"),
