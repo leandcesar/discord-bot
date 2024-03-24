@@ -100,4 +100,5 @@ make uninstall
 ## 📒 Referência
 
 - [disnake](https://docs.disnake.dev/en/stable/index.html)
+- [aiohttp](https://docs.aiohttp.org/en/stable/)
 - [pillow](https://pillow.readthedocs.io/en/stable/#)

@@ -1,4 +1,4 @@
-.PHONY: help install uninstall reinstall version run lint format security clear
+.PHONY: help install uninstall reinstall version run lint formatter format security clean
 .DEFAULT_GOAL := help
 VENV = venv
 PYTHON = $(VENV)/bin/python3
@@ -14,15 +14,17 @@ for line in sys.stdin:
 endef
 export PRINT_HELP_PYSCRIPT
 
-$(VENV)/bin/activate: requirements-dev.txt requirements.txt
-	@python3.10 -m venv $(VENV)
-	@$(PIP) install -U pip
-	@$(PIP) install -r requirements-dev.txt
+$(VENV)/bin/activate:
+	@$(VENV)/bin/poetry update
 
 help:
 	@python3.10 -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
 install: $(VENV)/bin/activate
+	@python3.10 -m venv $(VENV)
+	@$(PIP) install -U pip
+	@$(PIP) install poetry
+	@$(VENV)/bin/poetry install
 	@$(VENV)/bin/pre-commit install
 	@$(VENV)/bin/pre-commit install --hook-type commit-msg
 	@test -e .env || cp .env.sample .env
@@ -35,8 +37,7 @@ reinstall: uninstall install
 
 version: $(VENV)/bin/activate
 	@$(PYTHON) --version
-	@$(PIP) --version
-	@$(PIP) freeze
+	@$(VENV)/bin/poetry show --tree
 
 run: $(VENV)/bin/activate
 	$(PYTHON) -m bot
@@ -45,7 +46,7 @@ lint: $(VENV)/bin/activate
 	@$(VENV)/bin/pre-commit run mypy
 	@$(VENV)/bin/pre-commit run ruff
 
-format: $(VENV)/bin/activate
+formatter: $(VENV)/bin/activate
 	@$(VENV)/bin/pre-commit run black
 	@$(VENV)/bin/pre-commit run isort
 	@$(VENV)/bin/pre-commit run check-docstring-first
@@ -53,12 +54,14 @@ format: $(VENV)/bin/activate
 	@$(VENV)/bin/pre-commit run fix-encoding-pragma
 	@$(VENV)/bin/pre-commit run trailing-whitespace
 
+format: formatter
+
 security: $(VENV)/bin/activate
 	@$(VENV)/bin/pre-commit run bandit
 	@$(VENV)/bin/pre-commit run detect-private-key
 	@$(VENV)/bin/pre-commit run debug-statements
 
-clear:
+clean:
 	-@rm -fr build/
 	-@rm -fr dist/
 	-@rm -fr .eggs/
