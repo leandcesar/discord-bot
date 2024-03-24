@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import disnake
 from disnake.ext import commands
 
@@ -17,6 +16,10 @@ class Dropdown(disnake.ui.StringSelect):
 
 async def author_has_role(inter: disnake.GuildCommandInteraction) -> bool:
     return inter.author.top_role != inter.guild.default_role
+
+
+async def guild_has_badge_feature(inter: disnake.ApplicationCommandInteraction) -> bool:
+    return inter.guild.premium_tier >= 2
 
 
 async def update_author_color(inter: disnake.GuildCommandInteraction, hex_code: str) -> None:
@@ -49,7 +52,7 @@ class MemberCog(commands.Cog):
             callback=update_author_color,
             placeholder="escolha sua cor...",
             options=[
-                disnake.SelectOption(label="{0}. {1} ({2})".format(i, color["hex"], color["name"]))
+                disnake.SelectOption(label="{}. {} ({})".format(i, color["hex"], color["name"]))
                 for i, color in enumerate(colors, start=1)
             ],
         )
@@ -61,6 +64,7 @@ class MemberCog(commands.Cog):
         finally:
             image_binary.close()
 
+    @commands.check(guild_has_badge_feature)
     @commands.slash_command(name="emblema", description="edite seu emblema")
     async def command_badge(
         self,
