@@ -71,7 +71,7 @@ class MemberCog(commands.Cog):
         | None = commands.Param(None, name="imagem", description="imagem pra adicionar como emblema"),
     ) -> None:
         if not emote and not image:
-            return inter.send("envie um emote ou imagem")
+            return await inter.send("envie um **emote** ou uma **imagem**", ephemeral=True)
         await inter.response.defer()
         icon = emote or image
         role = await inter.author.top_role.edit(icon=icon)
