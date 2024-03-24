@@ -22,9 +22,7 @@ repos:
     hooks:
       - id: mypy
         additional_dependencies: [
-          botocore-stubs==1.31.62,
           mypy-extensions==1.0.0,
-          types-requests==2.31.0.1,
         ]
 
   - repo: https://github.com/PyCQA/bandit
