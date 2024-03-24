@@ -42,11 +42,11 @@ class RoleplayCog(commands.Cog):
         image: disnake.Attachment
         | None = commands.Param(None, name="imagem", description="imagem de quem quer fingir ser"),
     ) -> None:
-        await inter.response.defer(ephemeral=True)
         if not (member or (name and image)):
-            return await inter.edit_original_response(
-                "defina o **usuário** ou o **nome** e **imagem** de quem quer fingir ser"
+            return await inter.send(
+                "defina o **usuário** ou o **nome** e **imagem** de quem quer fingir ser", ephemeral=True
             )
+        await inter.response.defer(ephemeral=True)
         if member:
             name = member.display_name
             image = member.display_avatar
