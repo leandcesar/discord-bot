@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import disnake
 from disnake.ext import commands
 
@@ -15,11 +14,15 @@ class Dropdown(disnake.ui.StringSelect):
         return await self._callback(inter, hex_code)
 
 
-async def author_has_role(inter: disnake.ApplicationCommandInteraction) -> bool:
+async def author_has_role(inter: disnake.GuildCommandInteraction) -> bool:
     return inter.author.top_role != inter.guild.default_role
 
 
-async def update_author_color(inter: disnake.ApplicationCommandInteraction, hex_code: str) -> None:
+async def guild_has_badge_feature(inter: disnake.ApplicationCommandInteraction) -> bool:
+    return inter.guild.premium_tier >= 2
+
+
+async def update_author_color(inter: disnake.GuildCommandInteraction, hex_code: str) -> None:
     int_code = int(hex_code.strip("#"), 16)
     color = disnake.Color(int_code)
     old_color = inter.author.color
@@ -32,7 +35,7 @@ class MemberCog(commands.Cog):
     @commands.slash_command(name="cor", description="edite sua cor")
     async def command_color(
         self,
-        inter: disnake.ApplicationCommandInteraction,
+        inter: disnake.GuildCommandInteraction,
         hex_code: str | None = commands.Param(None, name="hex", description="código HEX da cor desejada"),
         image: disnake.Attachment
         | None = commands.Param(None, name="imagem", description="imagem pra extrair a paleta de cores"),
@@ -49,7 +52,7 @@ class MemberCog(commands.Cog):
             callback=update_author_color,
             placeholder="escolha sua cor...",
             options=[
-                disnake.SelectOption(label="{0}. {1} ({2})".format(i, color["hex"], color["name"]))
+                disnake.SelectOption(label="{}. {} ({})".format(i, color["hex"], color["name"]))
                 for i, color in enumerate(colors, start=1)
             ],
         )
@@ -61,17 +64,18 @@ class MemberCog(commands.Cog):
         finally:
             image_binary.close()
 
+    @commands.check(guild_has_badge_feature)
     @commands.slash_command(name="emblema", description="edite seu emblema")
     async def command_badge(
         self,
-        inter: disnake.ApplicationCommandInteraction,
+        inter: disnake.GuildCommandInteraction,
         emote: disnake.PartialEmoji
         | None = commands.Param(None, name="emote", description="emote pra adicionar como emblema"),
         image: disnake.Attachment
         | None = commands.Param(None, name="imagem", description="imagem pra adicionar como emblema"),
     ) -> None:
         if not emote and not image:
-            return inter.send("envie um emote ou imagem")
+            return await inter.send("envie um **emote** ou uma **imagem**", ephemeral=True)
         await inter.response.defer()
         icon = emote or image
         role = await inter.author.top_role.edit(icon=icon)

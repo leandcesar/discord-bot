@@ -1,4 +1,7 @@
 # -*- coding: utf-8 -*-
-from dotenv import load_dotenv
-
-load_dotenv()
+try:
+    from dotenv import load_dotenv
+except ImportError:
+    pass
+else:
+    load_dotenv()

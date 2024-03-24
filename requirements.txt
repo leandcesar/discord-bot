@@ -1,4 +1,0 @@
-aiohttp==3.9.3
-disnake==2.9.1
-pillow==10.2.0
-python-dotenv==1.0.1

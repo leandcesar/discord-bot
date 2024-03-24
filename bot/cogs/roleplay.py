@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 import disnake
 from disnake.ext import commands
 
@@ -9,7 +8,8 @@ from bot.services import pil
 class RoleplayCog(commands.Cog):
     @commands.slash_command(name="metadinha", description="faça metadinha com alguém")
     async def command_match(
-        inter: disnake.ApplicationCommandInteraction,
+        self,
+        inter: disnake.GuildCommandInteraction,
         member: disnake.Member = commands.Param(name="usuário", description="usuário pra fazer metadinha"),
         vertical: bool
         | None = commands.Param(None, name="vertical", description="a metadinha deve ser na vertical?"),
@@ -33,20 +33,20 @@ class RoleplayCog(commands.Cog):
 
     @commands.cooldown(rate=3, per=30)
     @commands.slash_command(name="fake", description="finja ser algo ou alguém")
-    async def command_message(
+    async def command_fake(
         self,
-        inter: disnake.ApplicationCommandInteraction,
+        inter: disnake.GuildCommandInteraction,
         content: str = commands.Param(name="mensagem", description="mensagem para enviar fingindo ser alguém"),
         member: disnake.Member | None = commands.Param(None, name="usuário", description="usuário para fingir ser"),
         name: str | None = commands.Param(None, name="nome", description="nome de quem quer fingir ser"),
         image: disnake.Attachment
         | None = commands.Param(None, name="imagem", description="imagem de quem quer fingir ser"),
     ) -> None:
-        await inter.response.defer(ephemeral=True)
         if not (member or (name and image)):
-            return await inter.edit_original_response(
-                "defina o **usuário** ou o **nome** e **imagem** de quem quer fingir ser"
+            return await inter.send(
+                "defina o **usuário** ou o **nome** e **imagem** de quem quer fingir ser", ephemeral=True
             )
+        await inter.response.defer(ephemeral=True)
         if member:
             name = member.display_name
             image = member.display_avatar
