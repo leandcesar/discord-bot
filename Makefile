@@ -50,7 +50,6 @@ format: $(VENV)/bin/activate
 	@$(VENV)/bin/pre-commit run isort
 	@$(VENV)/bin/pre-commit run check-docstring-first
 	@$(VENV)/bin/pre-commit run end-of-file-fixer
-	@$(VENV)/bin/pre-commit run fix-encoding-pragma
 	@$(VENV)/bin/pre-commit run trailing-whitespace
 
 security: $(VENV)/bin/activate
