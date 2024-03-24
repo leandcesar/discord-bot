@@ -9,7 +9,8 @@ from bot.services import pil
 class RoleplayCog(commands.Cog):
     @commands.slash_command(name="metadinha", description="faça metadinha com alguém")
     async def command_match(
-        inter: disnake.ApplicationCommandInteraction,
+        self,
+        inter: disnake.GuildCommandInteraction,
         member: disnake.Member = commands.Param(name="usuário", description="usuário pra fazer metadinha"),
         vertical: bool
         | None = commands.Param(None, name="vertical", description="a metadinha deve ser na vertical?"),
@@ -35,7 +36,7 @@ class RoleplayCog(commands.Cog):
     @commands.slash_command(name="fake", description="finja ser algo ou alguém")
     async def command_message(
         self,
-        inter: disnake.ApplicationCommandInteraction,
+        inter: disnake.GuildCommandInteraction,
         content: str = commands.Param(name="mensagem", description="mensagem para enviar fingindo ser alguém"),
         member: disnake.Member | None = commands.Param(None, name="usuário", description="usuário para fingir ser"),
         name: str | None = commands.Param(None, name="nome", description="nome de quem quer fingir ser"),

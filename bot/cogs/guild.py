@@ -10,7 +10,7 @@ class GuildCog(commands.Cog):
     @commands.slash_command(name="figurinha", description="adicione uma figurinha")
     async def command_sticker(
         self,
-        inter: disnake.ApplicationCommandInteraction,
+        inter: disnake.GuildCommandInteraction,
         image: disnake.Attachment = commands.Param(name="imagem", description="imagem pra adicionar como figurinha"),
         name: str = commands.Param(name="nome", description="nome da figurinha"),
         emoji: str = commands.Param(name="emoji", description="emoji pra representar a figurinha"),

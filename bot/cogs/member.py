@@ -15,11 +15,11 @@ class Dropdown(disnake.ui.StringSelect):
         return await self._callback(inter, hex_code)
 
 
-async def author_has_role(inter: disnake.ApplicationCommandInteraction) -> bool:
+async def author_has_role(inter: disnake.GuildCommandInteraction) -> bool:
     return inter.author.top_role != inter.guild.default_role
 
 
-async def update_author_color(inter: disnake.ApplicationCommandInteraction, hex_code: str) -> None:
+async def update_author_color(inter: disnake.GuildCommandInteraction, hex_code: str) -> None:
     int_code = int(hex_code.strip("#"), 16)
     color = disnake.Color(int_code)
     old_color = inter.author.color
@@ -32,7 +32,7 @@ class MemberCog(commands.Cog):
     @commands.slash_command(name="cor", description="edite sua cor")
     async def command_color(
         self,
-        inter: disnake.ApplicationCommandInteraction,
+        inter: disnake.GuildCommandInteraction,
         hex_code: str | None = commands.Param(None, name="hex", description="código HEX da cor desejada"),
         image: disnake.Attachment
         | None = commands.Param(None, name="imagem", description="imagem pra extrair a paleta de cores"),
@@ -64,7 +64,7 @@ class MemberCog(commands.Cog):
     @commands.slash_command(name="emblema", description="edite seu emblema")
     async def command_badge(
         self,
-        inter: disnake.ApplicationCommandInteraction,
+        inter: disnake.GuildCommandInteraction,
         emote: disnake.PartialEmoji
         | None = commands.Param(None, name="emote", description="emote pra adicionar como emblema"),
         image: disnake.Attachment
