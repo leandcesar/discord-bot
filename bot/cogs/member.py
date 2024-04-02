@@ -1,87 +1,118 @@
 import disnake
 from disnake.ext import commands
+from disnake.i18n import Localized
 
+from bot.ext import Dropdown, Profile, checks
 from bot.services import imagga, pil
 
 
-class Dropdown(disnake.ui.StringSelect):
-    def __init__(self, *, callback, **kwargs) -> None:
-        self._callback = callback
-        super().__init__(**kwargs)
-
-    async def callback(self, inter: disnake.MessageInteraction) -> None:
-        hex_code = self.values[0].split(" ", maxsplit=2)[1]
-        return await self._callback(inter, hex_code)
-
-
-async def author_has_role(inter: disnake.GuildCommandInteraction) -> bool:
-    return inter.author.top_role != inter.guild.default_role
-
-
-async def guild_has_badge_feature(inter: disnake.ApplicationCommandInteraction) -> bool:
-    return inter.guild.premium_tier >= 2
-
-
-async def update_author_color(inter: disnake.GuildCommandInteraction, hex_code: str) -> None:
-    int_code = int(hex_code.strip("#"), 16)
-    color = disnake.Color(int_code)
+async def update_user_color(inter: disnake.GuildCommandInteraction, int_code: str | int) -> None:
+    color = disnake.Color(int(int_code))
     old_color = inter.author.color
     role = await inter.author.top_role.edit(color=color)
-    return await inter.send(f"`{old_color}` -> `{role.color}`")
+    return await inter.send(f"🎨 `{old_color}` -> `{role.color}`")
 
 
-@commands.check(author_has_role)
-class MemberCog(commands.Cog):
-    @commands.slash_command(name="cor", description="edite sua cor")
-    async def command_color(
+@commands.check(checks.user_has_role)
+class Member(commands.Cog):
+    @commands.slash_command(
+        name=Localized(key="COMMAND_PROFILE"),
+        description=Localized("", key="COMMAND_PROFILE_DESC"),
+    )
+    async def profile(
         self,
         inter: disnake.GuildCommandInteraction,
-        hex_code: str | None = commands.Param(None, name="hex", description="código HEX da cor desejada"),
-        image: disnake.Attachment
-        | None = commands.Param(None, name="imagem", description="imagem pra extrair a paleta de cores"),
+        member: disnake.Member
+        | None = commands.Param(
+            None,
+            name=Localized(key="ARG_MEMBER"),
+            description=Localized("", key="ARG_MEMBER_DESC"),
+        ),
     ) -> None:
-        if hex_code:
-            return await update_author_color(inter, hex_code)
         await inter.response.defer()
+        if not member:
+            member = inter.author
+        user = await inter.bot.fetch_user(member.id)
+        profile = Profile(member=member, user=user)
+        return await inter.edit_original_response(embed=profile)
+
+    @commands.slash_command(
+        name=Localized(key="COMMAND_COLOR"),
+        description=Localized("", key="COMMAND_COLOR_DESC"),
+    )
+    async def color(
+        self,
+        inter: disnake.GuildCommandInteraction,
+        hex: str
+        | None = commands.Param(
+            None,
+            name=Localized(key="ARG_HEX"),
+            description=Localized("", key="ARG_HEX_DESC"),
+        ),
+        image: disnake.Attachment
+        | None = commands.Param(
+            None,
+            name=Localized(key="ARG_IMAGE"),
+            description=Localized("", key="ARG_IMAGE_DESC"),
+        ),
+    ) -> None:
+        await inter.response.defer()
+        if hex:
+            int_code = int(hex.strip("#"), 16)
+            return await update_user_color(inter, int_code)
         if not image:
             image = inter.author.display_avatar.with_size(512).with_format("png")
         image_binary = await image.read()
-        colors = await imagga.get_colors_from_image(image_binary)
-        view = disnake.ui.View()
-        dropdown = Dropdown(
-            callback=update_author_color,
-            placeholder="escolha sua cor...",
-            options=[
-                disnake.SelectOption(label="{}. {} ({})".format(i, color["hex"], color["name"]))
-                for i, color in enumerate(colors, start=1)
-            ],
-        )
-        view.add_item(dropdown)
-        try:
-            image_binary = pil.create_image_from_rgb_colors([color["rgb"] for color in colors])
-            file = disnake.File(fp=image_binary, filename="cores.png")
-            await inter.edit_original_response(f"cor atual: `{inter.author.color}`", file=file, view=view)
-        finally:
-            image_binary.close()
+        colors = await imagga.Colors().from_image(image_binary)
+        options = [
+            disnake.SelectOption(label=f"{i}. {c}", value=str(c.int_code)) for i, c in enumerate(colors, start=1)
+        ]
+        dropdown = Dropdown(callback=update_user_color, placeholder="Select...", options=options)
+        image_binary = pil.create_image_from_rgb_colors([c.rgb_code for c in colors])
+        file = disnake.File(fp=image_binary, filename="colors.png")
+        image_binary.close()
+        return await inter.edit_original_response(file=file, view=dropdown)
 
-    @commands.check(guild_has_badge_feature)
-    @commands.slash_command(name="emblema", description="edite seu emblema")
-    async def command_badge(
+    @commands.check(checks.guild_has_role_icons_feature)
+    @commands.slash_command(
+        name=Localized(key="COMMAND_BADGE"),
+        description=Localized("", key="COMMAND_BADGE_DESC"),
+    )
+    async def badge(
         self,
         inter: disnake.GuildCommandInteraction,
+        emoji: str
+        | None = commands.Param(
+            None,
+            name=Localized(key="ARG_EMOJI"),
+            description=Localized("", key="ARG_EMOJI_DESC"),
+        ),
         emote: disnake.PartialEmoji
-        | None = commands.Param(None, name="emote", description="emote pra adicionar como emblema"),
+        | None = commands.Param(
+            None,
+            name=Localized(key="ARG_EMOTE"),
+            description=Localized("", key="ARG_EMOTE_DESC"),
+        ),
         image: disnake.Attachment
-        | None = commands.Param(None, name="imagem", description="imagem pra adicionar como emblema"),
+        | None = commands.Param(
+            None,
+            name=Localized(key="ARG_IMAGE"),
+            description=Localized("", key="ARG_IMAGE_DESC"),
+        ),
     ) -> None:
-        if not emote and not image:
-            return await inter.send("envie um **emote** ou uma **imagem**", ephemeral=True)
         await inter.response.defer()
-        icon = emote or image
-        role = await inter.author.top_role.edit(icon=icon)
-        file = await role.icon.to_file()
-        await inter.edit_original_response(file=file)
+        if emoji:
+            role = await inter.author.top_role.edit(icon=None, emoji=emoji)
+        elif emote or image:
+            icon = emote or image
+            role = await inter.author.top_role.edit(icon=icon, emoji=None)
+        else:
+            role = inter.author.top_role
+        if role.icon:
+            file = await role.icon.to_file()
+            return await inter.edit_original_response(file=file)
+        return await inter.edit_original_response(role.emoji)
 
 
 def setup(bot: commands.Bot) -> None:
-    bot.add_cog(MemberCog(bot))
+    bot.add_cog(Member(bot))
