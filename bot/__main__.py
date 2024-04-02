@@ -8,6 +8,7 @@ bot = Bot(
     prefix=config.DISCORD_BOT_PREFIX,
     test_guilds=config.DISCORD_TEST_GUILD_IDS,
 )
+bot.i18n.load("bot/locale")
 
 if __name__ == "__main__":
     bot.load_extensions("bot/cogs")
