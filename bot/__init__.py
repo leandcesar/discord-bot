@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 try:
     from dotenv import load_dotenv
 except ImportError:

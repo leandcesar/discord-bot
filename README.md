@@ -8,97 +8,87 @@
 
 ---
 
-## 🚀 Começando
+# Getting Started
 
-### ✔️ Pré-requisitos
+## Prerequisites
 
-Antes de você começar, certifique-se que sua máquina tem os seguintes pré-requisitos instalados:
-- Python>=3.10
-- pip3
+- [Python 3.10 or higher](https://www.python.org/downloads/)
+- [Bot account](https://docs.disnake.dev/en/stable/discord.html)
 
-### ⤵️ Clonando
+## Installing
 
-1. Clone o repositório para sua máquina local utilizando o [Git](https://git-scm.com/).
+1. Clone the repository using [Git](https://git-scm.com/).
 ```sh
 git clone git@github.com:leandcesar/discord-bot.git
 ```
-
-### 💻 Instalando
-
-2. Mude para o diretório do projeto.
+2. Go to directory.
 ```sh
 cd discord-bot
 ```
-3. Crie um [venv](https://docs.python.org/3/library/venv.html) e instale as dependências com [pip](https://packaging.python.org/en/latest/tutorials/installing-packages/).
+3. Create a [venv](https://docs.python.org/3/library/venv.html) and install the dependencies with [poetry](https://python-poetry.org/).
 ```sh
 make install
 ```
-4. Verifique se tudo foi instalado corretamente.
+4. Check if everything was installed correctly.
 ```sh
 make version
 ```
 
-### 🏃 Executar
+## Running
 
-4. Para executar localmente, primeiro preencha as variáveis de ambiente no arquivo `.env`.
-
-5. Execute o bot do Discord.
+4. Fill environment variables in `.env` file.
+5. Run.
 ```sh
 make run
 ```
 
-### 🧑‍💻 Desenvolvendo
+# Contributing
 
-6. Inicialize o [Gitflow](https://www.atlassian.com/br/git/tutorials/comparing-workflows/gitflow-workflow).
+1. Initialize [Gitflow](https://www.atlassian.com/br/git/tutorials/comparing-workflows/gitflow-workflow).
 ```sh
 git flow init
 ```
-7. Crie uma nova branch com um nome descritivo (`git flow feature|bugfix|hotfix start awesome_branch_name`).
+2. Create a new branch with a descriptive name (`git flow feature|bugfix|hotfix start awesome_branch_name`).
 ```sh
 git flow feature start awesome_branch_name
 ```
-8. Faça as implementações no código na nova branch.
-
-### 🪄 Estilo, formatação e segurança
-
-9. Analise o código estaticamente com [ruff](https://beta.ruff.rs/docs/) e valide a tipagem com [mypy](https://mypy-lang.org/).
+3. Implement the code changes on the new branch.
+4. Analyze the code statically with [ruff](https://beta.ruff.rs/docs/) and organize imports with [mypy](https://mypy-lang.org/).
 ```sh
 make lint
 ```
-10. Formate o código nos padrões definidos com [black](https://black.readthedocs.io/en/stable/) e organize com [isort](https://pycqa.github.io/isort/).
+5. Format the code to defined standards with [black](https://black.readthedocs.io/en/stable/) and organize imports with [isort](https://pycqa.github.io/isort/).
 ```sh
 make format
 ```
-11. Valide problemas de segurança do código com [bandit](https://bandit.readthedocs.io/en/latest/).
+6. Validate code security issues with [bandit](https://bandit.readthedocs.io/en/latest/).
 ```sh
 make security
 ```
-
-### ⤴️ Publicando
-
-12. Commit suas mudanças na sua branch local utilizando mensagens no padrão do [Conventional Commit](https://www.conventionalcommits.org/en/) (por exemplo `git commit -m "feat|fix|refactor|style|test|docs|chore(scope): mensagem de exemplo"`).
+7. Commit your changes to your local branch using [Conventional Commit](https://www.conventionalcommits.org/en/) messages.
 ```sh
-git commit -m 'feat(readme): mensagem de exemplo'
+git commit -m 'feat(scope): example message'
 ```
-13. Dê o push das suas mudanças para o repositório remoto do [GitHub](https://github.com/).
+8. Push your changes to the remote [GitHub](https://github.com/) repository.
 ```sh
 git push origin feature/awesome_branch_name
 ```
-14. Crie um novo Pull Request para a branch `develop` no reposítorio do projeto.
+9. Create a Pull Request to the `develop` branch.
 
-### 🧹 Limpando
+# Cleaning up
 
-15. Remova os arquivos temporários de cache e outros.
+1. Remove temp files.
 ```sh
 make clean
 ```
-16. E, se necessário, desinstale todas as dependências instaladas no passo 3.
+2. Uninstall all.
 ```sh
 make uninstall
 ```
 
-## 📒 Referência
+# References
 
 - [disnake](https://docs.disnake.dev/en/stable/index.html)
 - [aiohttp](https://docs.aiohttp.org/en/stable/)
 - [pillow](https://pillow.readthedocs.io/en/stable/#)
+- [imagga](https://docs.imagga.com/)

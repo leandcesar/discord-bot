@@ -14,7 +14,7 @@ def find_all_tiktok_urls(text: str) -> list[str]:
     return re.findall(r"https?://(?:www\.|vm\.)?tiktok\.com/\S+", text)
 
 
-class ToolsCog(commands.Cog):
+class Events(commands.Cog):
     @commands.Cog.listener()
     async def on_message(self, message: disnake.Message) -> None:
         if message.author.bot or not message.content:
@@ -23,18 +23,16 @@ class ToolsCog(commands.Cog):
             content = twitter_url.replace("twitter.com", "fxtwitter.com")
             await message.reply(content, mention_author=False)
             await message.edit(suppress_embeds=True)
-            break  # only first to prevent spam
+            return None  # only first to prevent spam
         for tiktok_url in find_all_tiktok_urls(message.content):
-            try:
-                video_binary = await tiktok.download_video(tiktok_url)
+            video_binary = await tiktok.download_video(tiktok_url)
+            if video_binary:
                 file = disnake.File(fp=video_binary, filename="video.mp4")
                 await message.reply(file=file, mention_author=False)
                 await message.edit(suppress_embeds=True)
-            finally:
-                if video_binary:
-                    video_binary.close()
-            break  # only first to prevent spam
+                video_binary.close()
+                return None  # only first to prevent spam
 
 
 def setup(bot: commands.Bot) -> None:
-    bot.add_cog(ToolsCog(bot))
+    bot.add_cog(Events(bot))

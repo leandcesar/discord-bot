@@ -1,7 +1,7 @@
-# -*- coding: utf-8 -*-
 from os import environ
 
 DEBUG = bool(environ.get("DEBUG"))
+LOG_LEVEL = environ.get("LOG_LEVEL", "INFO")
 DISCORD_TEST_GUILD_IDS = list(map(int, environ["DISCORD_TEST_GUILD_IDS"].split(",")))
 DISCORD_BOT_TOKEN = environ["DISCORD_BOT_TOKEN"]
 DISCORD_BOT_PREFIX = environ.get("DISCORD_BOT_PREFIX", "!")
