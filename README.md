@@ -25,39 +25,37 @@ git clone git@github.com:leandcesar/discord-bot.git
 ```sh
 cd discord-bot
 ```
-3. Create a [venv](https://docs.python.org/3/library/venv.html) and install the dependencies with [poetry](https://python-poetry.org/).
-```sh
-make install
-```
-4. Check if everything was installed correctly.
-```sh
-make version
-```
 
 ## Running
 
-4. Fill environment variables in `.env` file.
-5. Run.
+3. Ensure to fill in the necessary environment variables in the `.env` file.
+4. Build the Docker service for the application.
 ```sh
-make run
+make build
+```
+4. Check if everything was installed correctly.
+```sh
+make up
 ```
 
 # Contributing
 
-1. Initialize [Gitflow](https://www.atlassian.com/br/git/tutorials/comparing-workflows/gitflow-workflow).
+## Development
+
+1. Create a [venv](https://docs.python.org/3/library/venv.html) and install dependencies using [pip](https://pip.pypa.io/en/stable/).
 ```sh
-git flow init
+make install
 ```
-2. Create a new branch with a descriptive name (`git flow feature|bugfix|hotfix start awesome_branch_name`).
+2. Create a new branch with a descriptive name.
 ```sh
 git flow feature start awesome_branch_name
 ```
-3. Implement the code changes on the new branch.
-4. Analyze the code statically with [ruff](https://beta.ruff.rs/docs/) and organize imports with [mypy](https://mypy-lang.org/).
+3. Implement your code changes on this new branch.
+4. Perform static code analysis with [ruff](https://beta.ruff.rs/docs/) and [mypy](https://mypy-lang.org/).
 ```sh
 make lint
 ```
-5. Format the code to defined standards with [black](https://black.readthedocs.io/en/stable/) and organize imports with [isort](https://pycqa.github.io/isort/).
+5. Format the code according to defined standards with [black](https://black.readthedocs.io/en/stable/) and organize imports using [isort](https://pycqa.github.io/isort/).
 ```sh
 make format
 ```
@@ -67,23 +65,26 @@ make security
 ```
 7. Commit your changes to your local branch using [Conventional Commit](https://www.conventionalcommits.org/en/) messages.
 ```sh
+git add.
+```
+```sh
 git commit -m 'feat(scope): example message'
 ```
 8. Push your changes to the remote [GitHub](https://github.com/) repository.
 ```sh
 git push origin feature/awesome_branch_name
 ```
-9. Create a Pull Request to the `develop` branch.
+9. Create a Pull Request to the `main` branch.
 
 # Cleaning up
 
-1. Remove temp files.
+10. Remove temporary files.
 ```sh
 make clean
 ```
-2. Uninstall all.
+11. Uninstall all Docker components.
 ```sh
-make uninstall
+make down
 ```
 
 # References

@@ -1,4 +1,4 @@
-.PHONY: help install uninstall reinstall version run lint formatter format security clean
+.PHONY: help build up down install uninstall reinstall version lint format security clean
 .DEFAULT_GOAL := help
 VENV = venv
 PYTHON = $(VENV)/bin/python3
@@ -14,17 +14,24 @@ for line in sys.stdin:
 endef
 export PRINT_HELP_PYSCRIPT
 
-$(VENV)/bin/activate:
-	@$(VENV)/bin/poetry update
+$(VENV)/bin/activate: requirements-dev.txt requirements.txt
+	@python3 -m venv $(VENV)
+	@$(PIP) install -U pip
+	@$(PIP) install -r requirements-dev.txt
 
 help:
-	@python3.10 -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
+	@python3 -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
+
+build:
+	@docker-compose build
+
+up:
+	@docker-compose up
+
+down:
+	@docker-compose down --rmi all --volumes --remove-orphans
 
 install: $(VENV)/bin/activate
-	@python3.10 -m venv $(VENV)
-	@$(PIP) install -U pip
-	@$(PIP) install poetry
-	@$(VENV)/bin/poetry install
 	@$(VENV)/bin/pre-commit install
 	@$(VENV)/bin/pre-commit install --hook-type commit-msg
 	@test -e .env || cp .env.sample .env
@@ -37,10 +44,7 @@ reinstall: uninstall install
 
 version: $(VENV)/bin/activate
 	@$(PYTHON) --version
-	@$(VENV)/bin/poetry show --tree
-
-run: $(VENV)/bin/activate
-	$(PYTHON) -m bot
+	@$(PIP) freeze
 
 lint: $(VENV)/bin/activate
 	@$(VENV)/bin/pre-commit run mypy

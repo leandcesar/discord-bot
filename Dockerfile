@@ -2,10 +2,13 @@ FROM python:3.11-bullseye
 
 WORKDIR /app
 
-COPY . .
+RUN apt-get update \
+    && apt-get install -y git ffmpeg
 
-RUN pip install poetry && \
-    poetry config virtualenvs.create false && \
-    poetry install --no-dev --no-interaction --no-ansi
+COPY requirements.txt .
+
+RUN pip install -r requirements.txt
+
+COPY . .
 
 CMD ["python", "-m", "bot"]
