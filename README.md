@@ -12,7 +12,8 @@
 
 ## Prerequisites
 
-- [Python 3.10 or higher](https://www.python.org/downloads/)
+- [Docker](https://docs.docker.com/get-docker/)
+- [Docker Compose](https://docs.docker.com/compose/)
 - [Bot account](https://docs.disnake.dev/en/stable/discord.html)
 
 ## Installing
@@ -38,24 +39,35 @@ make build
 make up
 ```
 
+# Cleaning up
+
+5. Uninstall all Docker components.
+```sh
+make down
+```
+
 # Contributing
+
+## Prerequisites
+
+- [Python 3.10 or higher](https://www.python.org/downloads/)
 
 ## Development
 
-1. Create a [venv](https://docs.python.org/3/library/venv.html) and install dependencies using [pip](https://pip.pypa.io/en/stable/).
+1. Create a [venv](https://docs.python.org/3/library/venv.html) and install dependencies with [pip](https://pip.pypa.io/en/stable/).
 ```sh
 make install
 ```
 2. Create a new branch with a descriptive name.
 ```sh
-git flow feature start awesome_branch_name
+git checkout -b awesome-branch-name
 ```
 3. Implement your code changes on this new branch.
 4. Perform static code analysis with [ruff](https://beta.ruff.rs/docs/) and [mypy](https://mypy-lang.org/).
 ```sh
 make lint
 ```
-5. Format the code according to defined standards with [black](https://black.readthedocs.io/en/stable/) and organize imports using [isort](https://pycqa.github.io/isort/).
+5. Format the code according to defined standards with [black](https://black.readthedocs.io/en/stable/) and organize imports with [isort](https://pycqa.github.io/isort/).
 ```sh
 make format
 ```
@@ -65,14 +77,14 @@ make security
 ```
 7. Commit your changes to your local branch using [Conventional Commit](https://www.conventionalcommits.org/en/) messages.
 ```sh
-git add.
+git add .
 ```
 ```sh
 git commit -m 'feat(scope): example message'
 ```
 8. Push your changes to the remote [GitHub](https://github.com/) repository.
 ```sh
-git push origin feature/awesome_branch_name
+git push origin awesome-branch-name
 ```
 9. Create a Pull Request to the `main` branch.
 
@@ -82,9 +94,9 @@ git push origin feature/awesome_branch_name
 ```sh
 make clean
 ```
-11. Uninstall all Docker components.
+11. Uninstall all dependencies.
 ```sh
-make down
+make uninstall
 ```
 
 # References

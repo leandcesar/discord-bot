@@ -15,12 +15,12 @@ endef
 export PRINT_HELP_PYSCRIPT
 
 $(VENV)/bin/activate: requirements-dev.txt requirements.txt
-	@python3 -m venv $(VENV)
+	@python3.10 -m venv $(VENV)
 	@$(PIP) install -U pip
 	@$(PIP) install -r requirements-dev.txt
 
 help:
-	@python3 -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
+	@python3.10 -c "$$PRINT_HELP_PYSCRIPT" < $(MAKEFILE_LIST)
 
 build:
 	@docker-compose build
