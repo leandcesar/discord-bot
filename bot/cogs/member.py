@@ -10,10 +10,9 @@ async def update_user_color(inter: disnake.GuildCommandInteraction, int_code: st
     color = disnake.Color(int(int_code))
     old_color = inter.author.color
     role = await inter.author.top_role.edit(color=color)
-    return await inter.send(f"🎨 `{old_color}` -> `{role.color}`")
+    await inter.send(f"🎨 `{old_color}` -> `{role.color}`", ephemeral=True)
 
 
-@commands.check(checks.user_has_role)
 class Member(commands.Cog):
     @commands.slash_command(
         name=Localized(key="COMMAND_PROFILE"),
@@ -34,8 +33,9 @@ class Member(commands.Cog):
             member = inter.author
         user = await inter.bot.fetch_user(member.id)
         profile = Profile(member=member, user=user)
-        return await inter.edit_original_response(embed=profile)
+        await inter.edit_original_response(embed=profile)
 
+    @commands.check(checks.user_has_role)
     @commands.slash_command(
         name=Localized(key="COMMAND_COLOR"),
         description=Localized("", key="COMMAND_COLOR_DESC"),
@@ -56,23 +56,25 @@ class Member(commands.Cog):
             description=Localized("", key="ARG_IMAGE_DESC"),
         ),
     ) -> None:
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=True)
         if hex:
             int_code = int(hex.strip("#"), 16)
-            return await update_user_color(inter, int_code)
-        if not image:
-            image = inter.author.display_avatar.with_size(512).with_format("png")
-        image_binary = await image.read()
-        colors = await imagga.Colors().from_image(image_binary)
-        options = [
-            disnake.SelectOption(label=f"{i}. {c}", value=str(c.int_code)) for i, c in enumerate(colors, start=1)
-        ]
-        dropdown = Dropdown(callback=update_user_color, placeholder="Select...", options=options)
-        image_binary = pil.create_image_from_rgb_colors([c.rgb_code for c in colors])
-        file = disnake.File(fp=image_binary, filename="colors.png")
-        image_binary.close()
-        return await inter.edit_original_response(file=file, view=dropdown)
+            await update_user_color(inter, int_code)
+        else:
+            if not image:
+                image = inter.author.display_avatar.with_size(512).with_format("png")
+            image_binary = await image.read()
+            colors = await imagga.Colors().from_image(image_binary)
+            options = [
+                disnake.SelectOption(label=f"{i}. {c}", value=str(c.int_code)) for i, c in enumerate(colors, start=1)
+            ]
+            dropdown = Dropdown(callback=update_user_color, placeholder="Select...", options=options)
+            image_binary = pil.create_image_from_rgb_colors([c.rgb_code for c in colors])
+            file = disnake.File(fp=image_binary, filename="colors.png")
+            image_binary.close()
+            await inter.edit_original_response(file=file, view=dropdown)
 
+    @commands.check(checks.user_has_role)
     @commands.check(checks.guild_has_role_icons_feature)
     @commands.slash_command(
         name=Localized(key="COMMAND_BADGE"),
@@ -100,7 +102,7 @@ class Member(commands.Cog):
             description=Localized("", key="ARG_IMAGE_DESC"),
         ),
     ) -> None:
-        await inter.response.defer()
+        await inter.response.defer(ephemeral=True)
         if emoji:
             role = await inter.author.top_role.edit(icon=None, emoji=emoji)
         elif emote or image:
@@ -110,8 +112,9 @@ class Member(commands.Cog):
             role = inter.author.top_role
         if role.icon:
             file = await role.icon.to_file()
-            return await inter.edit_original_response(file=file)
-        return await inter.edit_original_response(role.emoji)
+            await inter.edit_original_response(file=file)
+        else:
+            await inter.edit_original_response(role.emoji)
 
 
 def setup(bot: commands.Bot) -> None:

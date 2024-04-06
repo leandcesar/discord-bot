@@ -31,7 +31,7 @@ class Guild(commands.Cog):
         guild_sticker = await inter.guild.create_sticker(name=name, emoji=emoji, file=file)
         image_binary.close()
         file = await guild_sticker.to_file()
-        return await inter.edit_original_response(file=file)
+        await inter.edit_original_response(file=file)
 
 
 def setup(bot: commands.Bot) -> None:
