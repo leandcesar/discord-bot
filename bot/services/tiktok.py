@@ -37,14 +37,14 @@ def get_download_video_url(html: str) -> str | None:
 async def download_video(video_url: str, *, browser: str = "chrome") -> BytesIO | None:
     cookies = get_cookies(browser)
     async with aiohttp.ClientSession() as session:
-        async with session.get(video_url, headers=HEADERS, cookies=cookies, timeout=30) as response:
+        async with session.get(video_url, headers=HEADERS, cookies=cookies) as response:
             response.raise_for_status()
             html = await response.text()
             download_video_url = get_download_video_url(html)
         if not download_video_url:
             raise ValueError(f"Unable to find the video download URL for {video_url!r}")
         async with session.get(
-            download_video_url, headers=HEADERS, cookies=cookies, timeout=30, allow_redirects=True
+            download_video_url, headers=HEADERS, cookies=cookies, allow_redirects=True
         ) as response:
             response.raise_for_status()
             video_data = await response.read()

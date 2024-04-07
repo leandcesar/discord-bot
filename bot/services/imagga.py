@@ -36,26 +36,25 @@ class Color:
 class Colors(set[Color]):
     async def from_image(self, image_binary: bytes) -> Colors:
         colors = await get_colors_from_image(image_binary)
-        for color in colors:
-            self.add(
-                Color(
-                    name=str(color["closest_palette_color"]),
-                    hex_code=str(color["html_code"]),
-                    rgb_code=(int(color["r"]), int(color["g"]), int(color["b"])),
-                )
-            )
+        for color_data in colors:
+            name = str(color_data["closest_palette_color"])
+            hex_code = str(color_data["html_code"])
+            rgb_code = (int(color_data["r"]), int(color_data["g"]), int(color_data["b"]))
+            color = Color(name=name, hex_code=hex_code, rgb_code=rgb_code)
+            self.add(color)
         return self
 
 
 async def get_colors_from_image(image_binary: bytes) -> list[dict[str, str]]:
     async with aiohttp.ClientSession() as session:
-        async with session.post(
-            f"{config.IMAGGA_API_URL}/{config.IMAGGA_API_VERSION}/colors",
-            auth=aiohttp.client.BasicAuth(config.IMAGGA_API_KEY, config.IMAGGA_API_SECRET),
-            data={"image": image_binary},
-        ) as response:
+        url = f"{config.IMAGGA_API_URL}/{config.IMAGGA_API_VERSION}/colors"
+        auth = aiohttp.client.BasicAuth(config.IMAGGA_API_KEY, config.IMAGGA_API_SECRET)
+        payload = {"image": image_binary}
+        async with session.post(url, auth=auth, data=payload) as response:
             response.raise_for_status()
             data = await response.json()
-            colors = data["result"]["colors"]["image_colors"] + data["result"]["colors"]["background_colors"]
+            image_colors = data["result"]["colors"]["image_colors"]
+            background_colors = data["result"]["colors"]["background_colors"]
+            colors = image_colors + background_colors
             return colors
     return []
