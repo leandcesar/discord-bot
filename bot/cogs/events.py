@@ -3,6 +3,7 @@ import re
 import disnake
 from disnake.ext import commands
 
+from bot.core import Bot
 from bot.services import tiktok
 
 
@@ -34,5 +35,5 @@ class Events(commands.Cog):
                 return None  # only first to prevent spam
 
 
-def setup(bot: commands.Bot) -> None:
+def setup(bot: Bot) -> None:
     bot.add_cog(Events(bot))

@@ -2,6 +2,7 @@ import disnake
 from disnake.ext import commands
 from disnake.i18n import Localized
 
+from bot.core import Bot
 from bot.ext import Dropdown, Profile, checks
 from bot.services import imagga, pil
 
@@ -35,7 +36,7 @@ class Member(commands.Cog):
         profile = Profile(member=member, user=user)
         await inter.edit_original_response(embed=profile)
 
-    @commands.check(checks.user_has_role)
+    @commands.check(checks.user_has_role_icon())
     @commands.slash_command(
         name=Localized(key="COMMAND_COLOR"),
         description=Localized("", key="COMMAND_COLOR_DESC"),
@@ -74,8 +75,8 @@ class Member(commands.Cog):
             image_binary.close()
             await inter.edit_original_response(file=file, view=dropdown)
 
-    @commands.check(checks.user_has_role)
-    @commands.check(checks.guild_has_role_icons_feature)
+    @commands.check(checks.user_has_role_icon())
+    @commands.check(checks.guild_has_role_icons_feature())
     @commands.slash_command(
         name=Localized(key="COMMAND_BADGE"),
         description=Localized("", key="COMMAND_BADGE_DESC"),
@@ -117,5 +118,5 @@ class Member(commands.Cog):
             await inter.edit_original_response(role.emoji)
 
 
-def setup(bot: commands.Bot) -> None:
+def setup(bot: Bot) -> None:
     bot.add_cog(Member(bot))

@@ -2,6 +2,7 @@ import disnake
 from disnake.ext import commands
 from disnake.i18n import Localized
 
+from bot.core import Bot
 from bot.services import pil
 
 
@@ -34,5 +35,5 @@ class Guild(commands.Cog):
         await inter.edit_original_response(file=file)
 
 
-def setup(bot: commands.Bot) -> None:
+def setup(bot: Bot) -> None:
     bot.add_cog(Guild(bot))

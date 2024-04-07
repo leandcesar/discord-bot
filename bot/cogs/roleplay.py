@@ -2,7 +2,8 @@ import disnake
 from disnake.ext import commands
 from disnake.i18n import Localized
 
-from bot.ext import get_application_webhook
+from bot.core import Bot
+from bot.ext import application_webhook
 from bot.services import pil
 
 
@@ -72,10 +73,10 @@ class RoleplayCog(commands.Cog):
         if not channel:
             channel = inter.channel
         avatar_url = image.url if image else None
-        webhook = await get_application_webhook(inter, channel=channel)
+        webhook = await application_webhook(inter, channel=channel)
         message = await webhook.send(content, username=name, avatar_url=avatar_url, wait=True)
         await inter.edit_original_response(message.jump_url)
 
 
-def setup(bot: commands.Bot) -> None:
+def setup(bot: Bot) -> None:
     bot.add_cog(RoleplayCog(bot))

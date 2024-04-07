@@ -9,18 +9,18 @@ class Bot(commands.Bot):
         self,
         *,
         debug: bool = False,
-        logger: logging.Logger = logging.getLogger(),
-        logger_level,
-        prefix: str | None = None,
+        logger_cls: logging.Logger = logging.getLogger(),
+        logger_level: str | int = "INFO",
+        bot_prefix: str | None = None,
         test_guilds: list[int] | None = None,
         **kwargs,
     ) -> None:
         self.debug = debug
-        self.logger = logger
+        self.logger = logger_cls
         self.logger.setLevel(logger_level)
         command_sync_flags = commands.CommandSyncFlags.default()
         command_sync_flags.sync_commands_debug = self.debug
-        command_prefix = commands.when_mentioned_or(prefix) if prefix else commands.when_mentioned
+        command_prefix = commands.when_mentioned_or(bot_prefix) if bot_prefix else commands.when_mentioned
         intents = disnake.Intents.all()
         super().__init__(
             command_sync_flags=command_sync_flags,
@@ -32,6 +32,7 @@ class Bot(commands.Bot):
             enable_debug_events=self.debug,
             help_command=None,
             strict_localization=True,
+            **kwargs,
         )
 
     async def on_ready(self) -> None:
