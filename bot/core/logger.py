@@ -31,8 +31,12 @@ class LoggingFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-logger = logging.getLogger("disnake")
-logger.setLevel(logging.INFO)
 console_handler = logging.StreamHandler()
 console_handler.setFormatter(LoggingFormatter())
+
+logger = logging.getLogger(__name__)
 logger.addHandler(console_handler)
+
+disnake_logger = logging.getLogger("disnake")
+disnake_logger.setLevel(logging.INFO)
+disnake_logger.addHandler(console_handler)
