@@ -9,7 +9,10 @@ from bot.services import imagga, pil
 
 class Profile(disnake.Embed):
     def __init__(self, *, member: disnake.Member, user: disnake.User, **kwargs) -> None:
-        title = f"`{member.display_name}` aka. `{member.global_name}`, `{member.name}`"
+        title = f"`{member.display_name}` aka. "
+        if member.display_name != member.global_name:
+            title += f"`{member.global_name}`, "
+        title += f"`{member.name}`"
         if isinstance(member.activity, disnake.Spotify):
             description = f"[**{member.activity.title}** from {member.activity.artist}]({member.activity.track_url})"
         elif isinstance(member.activity, disnake.Streaming):
