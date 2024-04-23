@@ -34,6 +34,8 @@ class Bot(commands.Bot):
             strict_localization=True,
             **kwargs,
         )
+        self.deleted_message_history: list[disnake.Message] = []
+        self.edited_message_history: list[disnake.Message] = []
 
     async def on_ready(self) -> None:
         self.logger.info(f"Logged in as {self.user}")
@@ -41,3 +43,10 @@ class Bot(commands.Bot):
     async def on_application_command(self, inter: disnake.ApplicationCommandInteraction) -> None:
         self.logger.info(f"{inter.guild} #{inter.channel} @{inter.author}: /{inter.data.name} {inter.options}")
         await self.process_application_commands(inter)
+
+    async def on_slash_command_error(
+        self, inter: disnake.ApplicationCommandInteraction, e: commands.CommandError
+    ) -> None:
+        self.logger.error(
+            f"{inter.guild} #{inter.channel} @{inter.author}: /{inter.data.name} {inter.options}, {e}", exc_info=e
+        )

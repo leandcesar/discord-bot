@@ -13,10 +13,10 @@
     "ARG_IMAGE_DESC": "Image jointe",
     "ARG_MEMBER": "membre",
     "ARG_MEMBER_DESC": "Membre du serveur",
-    "ARG_MEMBER_LEFT": "membre_gauche",
-    "ARG_MEMBER_LEFT_DESC": "Membre du serveur qui sera à gauche",
-    "ARG_MEMBER_RIGHT": "membre_droite",
-    "ARG_MEMBER_RIGHT_DESC": "Membre du serveur qui sera à droite",
+    "ARG_MEMBER_1": "membre_1",
+    "ARG_MEMBER_1_DESC": "Membre du serveur 1",
+    "ARG_MEMBER_2": "membre_2",
+    "ARG_MEMBER_2_DESC": "Membre du serveur 2",
     "ARG_NAME": "nom",
     "ARG_NAME_DESC": "Nom",
     "ARG_VERTICAL": "vertical",
@@ -34,5 +34,8 @@
     "COMMAND_PROFILE": "profil",
     "COMMAND_PROFILE_DESC": "Obtenez des informations de profil d'un membre",
     "COMMAND_STICKER": "autocollant",
-    "COMMAND_STICKER_DESC": "Ajoutez un autocollant au serveur"
+    "COMMAND_STICKER_DESC": "Ajoutez un autocollant au serveur",
+    "COMMAND_UNDO": "annuler",
+    "COMMAND_UNDO_DESC": "Annuler la dernière suppression ou modification d'un message dans le canal (jusqu'à 5 minutes)",
+    "COMMAND_UNDO_EDIT": "Annuler la modification"
 }
