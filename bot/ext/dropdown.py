@@ -8,7 +8,7 @@ class Select(disnake.ui.StringSelect):
 
     async def callback(self, inter: disnake.MessageInteraction) -> None:
         user_input = self.values[0]
-        return await self._callback(inter, user_input)
+        await self._callback(inter, user_input)
 
 
 class Dropdown(disnake.ui.View):

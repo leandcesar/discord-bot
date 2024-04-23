@@ -1,7 +1,7 @@
 import disnake
 
 
-async def get_application_webhook(
+async def application_webhook(
     inter: disnake.GuildCommandInteraction,
     channel: disnake.TextChannel | None = None,
 ) -> disnake.Webhook:

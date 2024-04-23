@@ -2,6 +2,7 @@ import disnake
 from disnake.ext import commands
 from disnake.i18n import Localized
 
+from bot.core import Bot
 from bot.services import pil
 
 
@@ -24,15 +25,14 @@ class Guild(commands.Cog):
             description=Localized("", key="ARG_EMOJI_DESC"),
         ),
     ) -> None:
-        await inter.response.defer()
         image_binary = await image.read()
         image_binary = pil.resize_image(image_binary, size=(320, 320))
         file = disnake.File(fp=image_binary, filename="sticker.png")
         guild_sticker = await inter.guild.create_sticker(name=name, emoji=emoji, file=file)
         image_binary.close()
         file = await guild_sticker.to_file()
-        await inter.edit_original_response(file=file)
+        await inter.send(file=file)
 
 
-def setup(bot: commands.Bot) -> None:
+def setup(bot: Bot) -> None:
     bot.add_cog(Guild(bot))

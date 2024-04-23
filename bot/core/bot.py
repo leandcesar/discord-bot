@@ -9,18 +9,18 @@ class Bot(commands.Bot):
         self,
         *,
         debug: bool = False,
-        logger: logging.Logger = logging.getLogger(),
-        logger_level,
-        prefix: str | None = None,
+        logger_cls: logging.Logger = logging.getLogger(),
+        logger_level: str | int = "INFO",
+        bot_prefix: str | None = None,
         test_guilds: list[int] | None = None,
         **kwargs,
     ) -> None:
         self.debug = debug
-        self.logger = logger
+        self.logger = logger_cls
         self.logger.setLevel(logger_level)
         command_sync_flags = commands.CommandSyncFlags.default()
         command_sync_flags.sync_commands_debug = self.debug
-        command_prefix = commands.when_mentioned_or(prefix) if prefix else commands.when_mentioned
+        command_prefix = commands.when_mentioned_or(bot_prefix) if bot_prefix else commands.when_mentioned
         intents = disnake.Intents.all()
         super().__init__(
             command_sync_flags=command_sync_flags,
@@ -32,7 +32,10 @@ class Bot(commands.Bot):
             enable_debug_events=self.debug,
             help_command=None,
             strict_localization=True,
+            **kwargs,
         )
+        self.deleted_message_history: list[disnake.Message] = []
+        self.edited_message_history: list[disnake.Message] = []
 
     async def on_ready(self) -> None:
         self.logger.info(f"Logged in as {self.user}")
@@ -40,3 +43,10 @@ class Bot(commands.Bot):
     async def on_application_command(self, inter: disnake.ApplicationCommandInteraction) -> None:
         self.logger.info(f"{inter.guild} #{inter.channel} @{inter.author}: /{inter.data.name} {inter.options}")
         await self.process_application_commands(inter)
+
+    async def on_slash_command_error(
+        self, inter: disnake.ApplicationCommandInteraction, e: commands.CommandError
+    ) -> None:
+        self.logger.error(
+            f"{inter.guild} #{inter.channel} @{inter.author}: /{inter.data.name} {inter.options}, {e}", exc_info=e
+        )

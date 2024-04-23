@@ -1,2 +1,2 @@
-from .bot import Bot  # NOQA
-from .logger import logger  # NOQA
+from .bot import Bot  # noqa
+from .logger import logger  # noqa

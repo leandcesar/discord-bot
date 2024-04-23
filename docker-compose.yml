@@ -3,22 +3,15 @@ version: "3"
 services:
   bot:
     build: .
-    image: discord/bot
+    image: discord/bot:latest
     container_name: bot
     env_file:
       - .env
     restart: unless-stopped
     stdin_open: true
     tty: true
-    depends_on:
-      - lavalink
-      - g4f
-    links:
-      - "lavalink:lavalink"
-      - "g4f:g4f"
     networks:
       - internal
 
 networks:
-  internal:
-      name: internal
+  internal: {}
