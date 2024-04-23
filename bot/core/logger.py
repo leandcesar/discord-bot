@@ -1,6 +1,6 @@
 import logging
 
-import disnake  # NOQA
+import disnake  # noqa
 
 
 class LoggingFormatter(logging.Formatter):

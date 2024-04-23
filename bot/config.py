@@ -1,11 +1,14 @@
-from os import environ
+import json
+from os import getenv
 
-DEBUG = bool(environ.get("DEBUG"))
-LOG_LEVEL = environ.get("LOG_LEVEL", "INFO")
-DISCORD_TEST_GUILD_IDS = list(map(int, environ["DISCORD_TEST_GUILD_IDS"].split(",")))
-DISCORD_BOT_TOKEN = environ["DISCORD_BOT_TOKEN"]
-DISCORD_BOT_PREFIX = environ.get("DISCORD_BOT_PREFIX", "!")
-IMAGGA_API_URL = environ.get("IMAGGA_API_URL", "https://api.imagga.com")
-IMAGGA_API_VERSION = environ.get("IMAGGA_API_VERSION", "v2")
-IMAGGA_API_KEY = environ["IMAGGA_API_KEY"]
-IMAGGA_API_SECRET = environ["IMAGGA_API_SECRET"]
+DEBUG = bool(getenv("DEBUG"))
+LOG_LEVEL = getenv("LOG_LEVEL", "INFO")
+
+BOT_TOKEN = getenv("BOT_TOKEN")
+BOT_PREFIX = getenv("BOT_PREFIX")
+BOT_TEST_DISCORD_GUILD_IDS: list[int] = json.loads(getenv("BOT_TEST_DISCORD_GUILD_IDS", "[]"))
+
+IMAGGA_API_URL = getenv("IMAGGA_API_URL", "https://api.imagga.com")
+IMAGGA_API_VERSION = getenv("IMAGGA_API_VERSION", "v2")
+IMAGGA_API_KEY = getenv("IMAGGA_API_KEY")
+IMAGGA_API_SECRET = getenv("IMAGGA_API_SECRET")
