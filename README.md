@@ -39,7 +39,7 @@ make build
 make up
 ```
 
-# Cleaning up
+## Cleaning up
 
 5. Uninstall all Docker components.
 ```sh
@@ -51,6 +51,7 @@ make down
 ## Prerequisites
 
 - [Python 3.10 or higher](https://www.python.org/downloads/)
+- [Coroutines and Awaitables](https://docs.python.org/3/library/asyncio-task.html)
 
 ## Development
 
@@ -62,23 +63,29 @@ make install
 ```sh
 git checkout -b awesome-branch-name
 ```
-3. Implement your code changes on this new branch.
+3. Implement and add your code changes on this new branch.
+```sh
+git add .
+```
+
+## Code Style
+
 4. Perform static code analysis with [ruff](https://beta.ruff.rs/docs/) and [mypy](https://mypy-lang.org/).
 ```sh
 make lint
 ```
-5. Format the code according to defined standards with [black](https://black.readthedocs.io/en/stable/) and organize imports with [isort](https://pycqa.github.io/isort/).
-```sh
-make format
-```
-6. Validate code security issues with [bandit](https://bandit.readthedocs.io/en/latest/).
+5. Validate code security issues with [bandit](https://bandit.readthedocs.io/en/latest/).
 ```sh
 make security
 ```
-7. Commit your changes to your local branch using [Conventional Commit](https://www.conventionalcommits.org/en/) messages.
+6. Format the code according to defined standards with [black](https://black.readthedocs.io/en/stable/) and organize imports with [isort](https://pycqa.github.io/isort/).
 ```sh
-git add .
+make format
 ```
+
+## Contribute
+
+7. Commit your changes to your local branch using [Conventional Commit](https://www.conventionalcommits.org/en/) messages.
 ```sh
 git commit -m 'feat(scope): example message'
 ```
@@ -88,7 +95,7 @@ git push origin awesome-branch-name
 ```
 9. Create a Pull Request to the `main` branch.
 
-# Cleaning up
+## Cleaning up
 
 10. Remove temporary files.
 ```sh
