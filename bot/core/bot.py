@@ -1,3 +1,4 @@
+import datetime
 import logging
 
 import disnake
@@ -36,6 +37,7 @@ class Bot(commands.Bot):
         )
         self.deleted_message_history: list[disnake.Message] = []
         self.edited_message_history: list[disnake.Message] = []
+        self.init_time = datetime.datetime.now(tz=datetime.timezone.utc)
 
     async def on_ready(self) -> None:
         self.logger.info(f"Logged in as {self.user}")
