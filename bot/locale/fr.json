@@ -37,5 +37,7 @@
     "COMMAND_STICKER_DESC": "Ajoutez un autocollant au serveur",
     "COMMAND_UNDO": "annuler",
     "COMMAND_UNDO_DESC": "Annuler la dernière suppression ou modification d'un message dans le canal (jusqu'à 5 minutes)",
-    "COMMAND_UNDO_EDIT": "Annuler la modification"
+    "COMMAND_UNDO_EDIT": "Annuler la modification",
+    "COMMAND_UPTIME": "uptime",
+    "COMMAND_UPTIME_DESC": "IDK"
 }

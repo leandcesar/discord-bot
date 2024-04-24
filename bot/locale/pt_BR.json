@@ -37,5 +37,7 @@
     "COMMAND_STICKER_DESC": "Adicione uma figurinha no servidor",
     "COMMAND_UNDO": "desfazer",
     "COMMAND_UNDO_DESC": "Desfaça a última exclusão ou edição de mensagem do canal (até 5 minutos)",
-    "COMMAND_UNDO_EDIT": "Desfazer edição"
+    "COMMAND_UNDO_EDIT": "Desfazer edição",
+    "COMMAND_UPTIME": "uptime",
+    "COMMAND_UPTIME_DESC": "IDK"
 }
