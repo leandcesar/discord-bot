@@ -2,7 +2,6 @@ import datetime
 
 import disnake
 from disnake.ext import commands
-from disnake.i18n import Localized
 
 from bot.core import Bot
 from bot.ext import application_webhook
@@ -41,33 +40,27 @@ class Stalker(commands.Cog):
             m for m in self.bot.deleted_message_history if seconds_ago(m.created_at) <= 600
         ]
 
-    @commands.slash_command(
-        name=Localized(key="COMMAND_FAKE"),
-        description=Localized("", key="COMMAND_FAKE_DESC"),
-    )
+    @commands.slash_command()
     async def fake(
         self,
         inter: disnake.GuildCommandInteraction,
-        content: str = commands.Param(
-            name=Localized(key="ARG_CONTENT"), description=Localized("", key="ARG_CONTENT_DESC")
-        ),
-        member: disnake.Member
-        | None = commands.Param(
-            None, name=Localized(key="ARG_MEMBER"), description=Localized("", key="ARG_MEMBER_DESC")
-        ),
-        name: str
-        | None = commands.Param(
-            None, name=Localized(key="ARG_NAME"), description=Localized("", key="ARG_NAME_DESC")
-        ),
-        image: disnake.Attachment
-        | None = commands.Param(
-            None, name=Localized(key="ARG_IMAGE"), description=Localized("", key="ARG_IMAGE_DESC")
-        ),
-        channel: disnake.TextChannel
-        | None = commands.Param(
-            None, name=Localized(key="ARG_CHANNEL"), description=Localized("", key="ARG_CHANNEL_DESC")
-        ),
+        content: str,
+        member: disnake.Member | None = None,
+        name: str | None = None,
+        image: disnake.Attachment | None = None,
+        channel: disnake.TextChannel | None = None,
     ) -> None:
+        """
+        Send a message faking being someone else. {{FAKE}}
+
+        Parameters
+        ----------
+        content: Message content {{CONTENT}}
+        member: Server user {{MEMBER}}
+        name: Name {{NAME}}
+        image: Image attachment {{IMAGE}}
+        channel: Server channel {{CHANNEL}}
+        """
         if not member:
             member = inter.author
         if not name:
@@ -81,11 +74,11 @@ class Stalker(commands.Cog):
         message = await webhook.send(content, username=name, avatar_url=avatar_url, wait=True)
         await inter.send(message.jump_url, ephemeral=True)
 
-    @commands.slash_command(
-        name=Localized(key="COMMAND_UNDO"),
-        description=Localized("", key="COMMAND_UNDO_DESC"),
-    )
+    @commands.slash_command()
     async def undo(self, inter: disnake.GuildCommandInteraction) -> None:
+        """
+        Undo the last deletion or edit of a message in the channel (up to 5 minutes). {{UNDO}}
+        """
         for m in self.bot.deleted_message_history[::-1]:
             if m.channel.id == inter.channel.id:
                 await inter.response.defer(ephemeral=True)
@@ -104,12 +97,11 @@ class Stalker(commands.Cog):
                 await inter.edit_original_response(message.jump_url)
                 return None
 
-    @commands.message_command(name=Localized("Undo edit", key="COMMAND_UNDO_EDIT"))
-    async def undo_edit(
-        self,
-        inter: disnake.MessageCommandInteraction,
-        message: disnake.Message,
-    ):
+    @commands.message_command()
+    async def undo_edit(self, inter: disnake.MessageCommandInteraction, message: disnake.Message) -> None:
+        """
+        {{UNDO_EDIT}}
+        """
         if not message.edited_at:
             return None
         for m in self.bot.edited_message_history[::-1]:

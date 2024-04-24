@@ -1,6 +1,5 @@
 import disnake
 from disnake.ext import commands
-from disnake.i18n import Localized
 
 from bot.core import Bot
 from bot.ext import Dropdown, checks
@@ -44,20 +43,15 @@ async def update_user_color(inter: disnake.GuildCommandInteraction, int_code: st
 
 
 class Member(commands.Cog):
-    @commands.slash_command(
-        name=Localized(key="COMMAND_PROFILE"),
-        description=Localized("", key="COMMAND_PROFILE_DESC"),
-    )
-    async def profile(
-        self,
-        inter: disnake.GuildCommandInteraction,
-        member: disnake.Member
-        | None = commands.Param(
-            None,
-            name=Localized(key="ARG_MEMBER"),
-            description=Localized("", key="ARG_MEMBER_DESC"),
-        ),
-    ) -> None:
+    @commands.slash_command()
+    async def profile(self, inter: disnake.GuildCommandInteraction, member: disnake.Member | None) -> None:
+        """
+        Get profile information of a user. {{PROFILE}}
+
+        Parameters
+        ----------
+        member: Server user {{MEMBER}}
+        """
         if not member:
             member = inter.author
         user = await inter.bot.fetch_user(member.id)
@@ -65,26 +59,20 @@ class Member(commands.Cog):
         await inter.send(embed=profile)
 
     @commands.check(checks.user_has_role_icon())
-    @commands.slash_command(
-        name=Localized(key="COMMAND_COLOR"),
-        description=Localized("", key="COMMAND_COLOR_DESC"),
-    )
+    @commands.slash_command()
     async def color(
         self,
         inter: disnake.GuildCommandInteraction,
-        hex: str
-        | None = commands.Param(
-            None,
-            name=Localized(key="ARG_HEX"),
-            description=Localized("", key="ARG_HEX_DESC"),
-        ),
-        image: disnake.Attachment
-        | None = commands.Param(
-            None,
-            name=Localized(key="ARG_IMAGE"),
-            description=Localized("", key="ARG_IMAGE_DESC"),
-        ),
+        hex: str | None,
+        image: disnake.Attachment | None,
     ) -> None:
+        """
+        Change your color on the server. {{COLOR}}
+
+        Parameters
+        ----------
+        hex: Hexadecimal code (#ABC123) {{HEX}}
+        """
         if hex:
             int_code = int(hex.strip("#"), 16)
             await update_user_color(inter, int_code)
@@ -104,32 +92,23 @@ class Member(commands.Cog):
 
     @commands.check(checks.user_has_role_icon())
     @commands.check(checks.guild_has_role_icons_feature())
-    @commands.slash_command(
-        name=Localized(key="COMMAND_BADGE"),
-        description=Localized("", key="COMMAND_BADGE_DESC"),
-    )
+    @commands.slash_command()
     async def badge(
         self,
         inter: disnake.GuildCommandInteraction,
-        emoji: str
-        | None = commands.Param(
-            None,
-            name=Localized(key="ARG_EMOJI"),
-            description=Localized("", key="ARG_EMOJI_DESC"),
-        ),
-        emote: disnake.PartialEmoji
-        | None = commands.Param(
-            None,
-            name=Localized(key="ARG_EMOTE"),
-            description=Localized("", key="ARG_EMOTE_DESC"),
-        ),
-        image: disnake.Attachment
-        | None = commands.Param(
-            None,
-            name=Localized(key="ARG_IMAGE"),
-            description=Localized("", key="ARG_IMAGE_DESC"),
-        ),
+        emoji: str | None,
+        emote: disnake.PartialEmoji | None,
+        image: disnake.Attachment | None,
     ) -> None:
+        """
+        Change your badge on the server. {{BADGE}}
+
+        Parameters
+        ----------
+        emoji: Emoji {{EMOJI}}
+        emote: Emote {{EMOTE}}
+        image: Image attachment {{IMAGE}}
+        """
         if emoji:
             role = await inter.author.top_role.edit(icon=None, emoji=emoji)
         elif emote or image:
@@ -143,23 +122,23 @@ class Member(commands.Cog):
         else:
             await inter.send(role.emoji, ephemeral=True)
 
-    @commands.slash_command(
-        name=Localized(key="COMMAND_MATCH"),
-        description=Localized("", key="COMMAND_MATCH_DESC"),
-    )
+    @commands.slash_command()
     async def match(
         self,
         inter: disnake.GuildCommandInteraction,
-        member_1: disnake.Member = commands.Param(
-            name=Localized(key="ARG_MEMBER_1"), description=Localized("", key="ARG_MEMBER_1_DESC")
-        ),
-        member_2: disnake.Member = commands.Param(
-            name=Localized(key="ARG_MEMBER_2"), description=Localized("", key="ARG_MEMBER_2_DESC")
-        ),
-        vertical: bool = commands.Param(
-            False, name=Localized(key="ARG_VERTICAL"), description=Localized("", key="ARG_VERTICAL_DESC")
-        ),
+        member_1: disnake.Member,
+        member_2: disnake.Member,
+        vertical: bool = False,
     ) -> None:
+        """
+        Match profile pictures of two users. {{MATCH}}
+
+        Parameters
+        ----------
+        member_1: Server user 1 {{MEMBER1}}
+        member_2: Server user 2 {{MEMBER2}}
+        vertical: Should the profile pictures be joined vertically? {{VERTICAL}}
+        """
         image_left_binary = await member_1.display_avatar.with_size(512).with_format("png").read()
         image_right_binary = await member_2.display_avatar.with_size(512).with_format("png").read()
         if vertical:
