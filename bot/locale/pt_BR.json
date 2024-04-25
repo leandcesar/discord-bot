@@ -39,5 +39,6 @@
     "COMMAND_UNDO_DESC": "Desfaça a última exclusão ou edição de mensagem do canal (até 5 minutos)",
     "COMMAND_UNDO_EDIT": "Desfazer edição",
     "COMMAND_UPTIME": "uptime",
+    "COMMAND_UPTIME_MESSAGE": "Estou online",
     "COMMAND_UPTIME_DESC": "IDK"
 }

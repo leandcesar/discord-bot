@@ -39,5 +39,6 @@
     "COMMAND_UNDO_DESC": "Undo the last deletion or edit of a message in the channel (up to 5 minutes)",
     "COMMAND_UNDO_EDIT": "Undo edit",
     "COMMAND_UPTIME": "uptime",
+    "COMMAND_UPTIME_MESSAGE": "I've been online for",
     "COMMAND_UPTIME_DESC": "IDK"
 }

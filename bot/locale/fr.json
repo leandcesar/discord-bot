@@ -39,5 +39,6 @@
     "COMMAND_UNDO_DESC": "Annuler la dernière suppression ou modification d'un message dans le canal (jusqu'à 5 minutes)",
     "COMMAND_UNDO_EDIT": "Annuler la modification",
     "COMMAND_UPTIME": "uptime",
+    "COMMAND_UPTIME_MESSAGE": "Je suis en ligne depuis",
     "COMMAND_UPTIME_DESC": "IDK"
 }
