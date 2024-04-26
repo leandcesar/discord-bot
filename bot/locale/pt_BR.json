@@ -37,5 +37,8 @@
     "STICKER_DESCRIPTION": "Adicione uma figurinha no servidor",
     "UNDO_NAME": "desfazer",
     "UNDO_DESCRIPTION": "Desfaça a última exclusão ou edição de mensagem do canal (até 5 minutos)",
-    "UNDO_EDIT_NAME": "Desfazer edição"
+    "UNDO_EDIT_NAME": "Desfazer edição",
+    "UPTIME_NAME": "uptime",
+    "UPTIME_DESCRIPTION": "Veja há quanto tempo o bot está online",
+    "UPTIME_MESSAGE": "Estou online"
 }

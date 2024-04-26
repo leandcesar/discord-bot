@@ -37,5 +37,8 @@
     "STICKER_DESCRIPTION": "Ajoutez un autocollant au serveur",
     "UNDO_NAME": "annuler",
     "UNDO_DESCRIPTION": "Annuler la dernière suppression ou modification d'un message dans le canal (jusqu'à 5 minutes)",
-    "UNDO_EDIT_NAME": "Annuler la modification"
+    "UNDO_EDIT_NAME": "Annuler la modification",
+    "UPTIME_NAME": "uptime",
+    "UPTIME_DESCRIPTION": "Vérifiez combien de temps le bot est en ligne",
+    "UPTIME_MESSAGE": "Je suis en ligne depuis"
 }
