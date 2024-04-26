@@ -40,5 +40,5 @@
     "COMMAND_UNDO_EDIT": "Annuler la modification",
     "COMMAND_UPTIME": "uptime",
     "COMMAND_UPTIME_MESSAGE": "Je suis en ligne depuis",
-    "COMMAND_UPTIME_DESC": "IDK"
+    "COMMAND_UPTIME_DESC": "Vérifiez combien de temps le bot est en ligne."
 }

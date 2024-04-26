@@ -40,5 +40,5 @@
     "COMMAND_UNDO_EDIT": "Desfazer edição",
     "COMMAND_UPTIME": "uptime",
     "COMMAND_UPTIME_MESSAGE": "Estou online",
-    "COMMAND_UPTIME_DESC": "IDK"
+    "COMMAND_UPTIME_DESC": "Veja há quanto tempo o bot está online."
 }

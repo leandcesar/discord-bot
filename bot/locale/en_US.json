@@ -40,5 +40,5 @@
     "COMMAND_UNDO_EDIT": "Undo edit",
     "COMMAND_UPTIME": "uptime",
     "COMMAND_UPTIME_MESSAGE": "I've been online for",
-    "COMMAND_UPTIME_DESC": "IDK"
+    "COMMAND_UPTIME_DESC": "Check how long the bot has been online."
 }
