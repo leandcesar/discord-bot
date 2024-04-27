@@ -58,7 +58,7 @@ class EmoteError(disnake.Embed):
         description = "IDK"
 
         title = inter.bot.i18n.get(key="COMMAND_EMOTE_ADD_ERR_TITLE")[locale]
-        title = title.format("name")
+        title = title.format(name)
 
         match err_enum:
             case EmoteErrorEnum.WITHOUT_PERMISSION:
