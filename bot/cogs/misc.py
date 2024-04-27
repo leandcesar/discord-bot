@@ -1,8 +1,15 @@
+from enum import Enum
+
 import disnake
 from disnake.ext import commands
 from disnake.i18n import Localized
 
 from bot.core import Bot
+
+# Source: https://discord.com/blog/beginners-guide-to-custom-emojis#heading-4
+MAX_IMAGE_BYTES_SIZE = 256 * 1000
+NO_PERM_GIF = "https://media1.tenor.com/m/8wwLg1lZS_gAAAAC/denied-incredibles.gif"
+LARGE_GIF = "https://media1.tenor.com/m/SGCLBFPTK4sAAAAC/im-big-boned-eric-cartman.gif"
 
 
 class Uptime(disnake.Embed):
@@ -16,12 +23,41 @@ class Uptime(disnake.Embed):
 
 class Emote(disnake.Embed):
     def __init__(self, *, name: str, image: disnake.File) -> None:
-        print(name)
         super().__init__(
             title=f"New Emote `{name}`",
             color=disnake.Colour.green(),
         )
         self.set_image(file=image)
+
+
+class EmoteErrorEnum(Enum):
+    WITHOUT_PERMISSION = 1
+    LARGE_IMAGE = 2
+
+
+class EmoteError(disnake.Embed):
+    def __init__(self, *, name: str, err_enum: EmoteErrorEnum) -> None:
+        gif_error = None
+        description = "IDK"
+
+        match err_enum:
+            case EmoteErrorEnum.WITHOUT_PERMISSION:
+                gif_error = NO_PERM_GIF
+                description = "Você não tem permissão para criar emotes"
+
+            case EmoteErrorEnum.LARGE_IMAGE:
+                gif_error = LARGE_GIF
+                description = "O arquivo é muito grande, por favor verifique a [documentação]({})".format(
+                    "https://discord.com/blog/beginners-guide-to-custom-emojis#heading-4"
+                )
+
+        super().__init__(
+            title=f"New emote `{name}` error!",
+            description=description,
+            color=disnake.Colour.red(),
+        )
+
+        self.set_image(url=gif_error)
 
 
 class Misc(commands.Cog):
@@ -38,15 +74,23 @@ class Misc(commands.Cog):
 
         await inter.send(embed=Uptime(description=f"{message} <t:{timestamp}:R>"))
 
-    @commands.slash_command(name="emote", description="IDK")
+    @commands.slash_command(name=Localized(key="COMMAND_EMOTE"), description=Localized(key="COMMAND_EMOTE_DESC"))
     async def emote(
         self,
         inter: disnake.GuildCommandInteraction,
-        name: str = commands.Param(name="nome", description="Nome do emote."),
-        image: disnake.Attachment = commands.Param(name="emote", description="Emote image"),
+        name: str = commands.Param(
+            name=Localized(key="COMMAND_EMOTE_ARG_NAME"), description=Localized(key="COMMAND_EMOTE_ARG_NAME_DESC")
+        ),
+        image: disnake.Attachment = commands.Param(
+            name=Localized(key="COMMAND_EMOTE_ARG_IMAGE"), description=Localized(key="COMMAND_EMOTE_ARG_IMAGE_DESC")
+        ),
     ) -> None:
         if not inter.permissions.manage_emojis:
-            await inter.send("Erro! Você não tem permissão")
+            await inter.send(embed=EmoteError(name=name, err_enum=EmoteErrorEnum.WITHOUT_PERMISSION))
+            return
+
+        if image.size >= MAX_IMAGE_BYTES_SIZE:
+            await inter.send(embed=EmoteError(name=name, err_enum=EmoteErrorEnum.LARGE_IMAGE))
             return
 
         image_bin = await image.read()
