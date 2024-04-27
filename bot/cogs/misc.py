@@ -36,23 +36,33 @@ class EmoteErrorEnum(Enum):
 
 
 class EmoteError(disnake.Embed):
-    def __init__(self, *, name: str, err_enum: EmoteErrorEnum) -> None:
+    def __init__(
+        self,
+        *,
+        name: str,
+        err_enum: EmoteErrorEnum,
+        inter: disnake.GuildCommandInteraction,
+    ) -> None:
+        locale = inter.locale.name.replace("_", "-")
         gif_error = None
         description = "IDK"
+
+        title = inter.bot.i18n.get(key="COMMAND_EMOTE_ERR_TITLE")[locale]
+        title = title.format("name")
 
         match err_enum:
             case EmoteErrorEnum.WITHOUT_PERMISSION:
                 gif_error = NO_PERM_GIF
-                description = "Você não tem permissão para criar emotes"
+                description = inter.bot.i18n.get(key="COMMAND_EMOTE_ERR_WITHOUT_PERM")[locale]
 
             case EmoteErrorEnum.LARGE_IMAGE:
                 gif_error = LARGE_GIF
-                description = "O arquivo é muito grande, por favor verifique a [documentação]({})".format(
+                description = inter.bot.i18n.get(key="COMMAND_EMOTE_ERR_LARGE_IMAGE")[locale].format(
                     "https://discord.com/blog/beginners-guide-to-custom-emojis#heading-4"
                 )
 
         super().__init__(
-            title=f"New emote `{name}` error!",
+            title=title,
             description=description,
             color=disnake.Colour.red(),
         )
@@ -86,11 +96,11 @@ class Misc(commands.Cog):
         ),
     ) -> None:
         if not inter.permissions.manage_emojis:
-            await inter.send(embed=EmoteError(name=name, err_enum=EmoteErrorEnum.WITHOUT_PERMISSION))
+            await inter.send(embed=EmoteError(name=name, err_enum=EmoteErrorEnum.WITHOUT_PERMISSION, inter=inter))
             return
 
         if image.size >= MAX_IMAGE_BYTES_SIZE:
-            await inter.send(embed=EmoteError(name=name, err_enum=EmoteErrorEnum.LARGE_IMAGE))
+            await inter.send(embed=EmoteError(name=name, err_enum=EmoteErrorEnum.LARGE_IMAGE, inter=inter))
             return
 
         image_bin = await image.read()
