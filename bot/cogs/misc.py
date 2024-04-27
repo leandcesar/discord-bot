@@ -30,7 +30,7 @@ class Emote(disnake.Embed):
         inter: disnake.GuildCommandInteraction,
     ) -> None:
         locale = inter.locale.name.replace("_", "-")
-        title = inter.bot.i18n.get(key="COMMAND_EMOTE_TITLE")[locale]
+        title = inter.bot.i18n.get(key="COMMAND_EMOTE_ADD_TITLE")[locale]
         title = title.format(name)
 
         super().__init__(
@@ -57,17 +57,17 @@ class EmoteError(disnake.Embed):
         gif_error = None
         description = "IDK"
 
-        title = inter.bot.i18n.get(key="COMMAND_EMOTE_ERR_TITLE")[locale]
+        title = inter.bot.i18n.get(key="COMMAND_EMOTE_ADD_ERR_TITLE")[locale]
         title = title.format("name")
 
         match err_enum:
             case EmoteErrorEnum.WITHOUT_PERMISSION:
                 gif_error = NO_PERM_GIF
-                description = inter.bot.i18n.get(key="COMMAND_EMOTE_ERR_WITHOUT_PERM")[locale]
+                description = inter.bot.i18n.get(key="COMMAND_EMOTE_ADD_ERR_WITHOUT_PERM")[locale]
 
             case EmoteErrorEnum.LARGE_IMAGE:
                 gif_error = LARGE_GIF
-                description = inter.bot.i18n.get(key="COMMAND_EMOTE_ERR_LARGE_IMAGE")[locale].format(
+                description = inter.bot.i18n.get(key="COMMAND_EMOTE_ADD_ERR_LARGE_IMAGE")[locale].format(
                     "https://discord.com/blog/beginners-guide-to-custom-emojis#heading-4"
                 )
 
@@ -98,11 +98,20 @@ class Misc(commands.Cog):
     async def emote(
         self,
         inter: disnake.GuildCommandInteraction,
+    ):
+        pass
+
+    @emote.sub_command(name=Localized(key="COMMAND_EMOTE_ADD"), description=Localized(key="COMMAND_EMOTE_ADD_DESC"))
+    async def emote_add(
+        self,
+        inter: disnake.GuildCommandInteraction,
         name: str = commands.Param(
-            name=Localized(key="COMMAND_EMOTE_ARG_NAME"), description=Localized(key="COMMAND_EMOTE_ARG_NAME_DESC")
+            name=Localized(key="COMMAND_EMOTE_ADD_ARG_NAME"),
+            description=Localized(key="COMMAND_EMOTE_ADD_ARG_NAME_DESC"),
         ),
         image: disnake.Attachment = commands.Param(
-            name=Localized(key="COMMAND_EMOTE_ARG_IMAGE"), description=Localized(key="COMMAND_EMOTE_ARG_IMAGE_DESC")
+            name=Localized(key="COMMAND_EMOTE_ADD_ARG_IMAGE"),
+            description=Localized(key="COMMAND_EMOTE_ADD_ARG_IMAGE_DESC"),
         ),
     ) -> None:
         if not inter.permissions.manage_emojis:
