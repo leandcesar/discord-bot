@@ -14,6 +14,16 @@ class Uptime(disnake.Embed):
         )
 
 
+class Emote(disnake.Embed):
+    def __init__(self, *, name: str, image: disnake.File) -> None:
+        print(name)
+        super().__init__(
+            title=f"New Emote `{name}`",
+            color=disnake.Colour.green(),
+        )
+        self.set_image(file=image)
+
+
 class Misc(commands.Cog):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
@@ -27,6 +37,27 @@ class Misc(commands.Cog):
         timestamp = int(self.bot.init_time.timestamp())
 
         await inter.send(embed=Uptime(description=f"{message} <t:{timestamp}:R>"))
+
+    @commands.slash_command(name="emote", description="IDK")
+    async def emote(
+        self,
+        inter: disnake.GuildCommandInteraction,
+        name: str = commands.Param(name="nome", description="Nome do emote."),
+        image: disnake.Attachment = commands.Param(name="emote", description="Emote image"),
+    ) -> None:
+        if not inter.permissions.manage_emojis:
+            await inter.send("Erro! Você não tem permissão")
+            return
+
+        image_bin = await image.read()
+
+        try:
+            await inter.guild.create_custom_emoji(name=name, image=image_bin)
+        except Exception as err:
+            await inter.send(err)
+        else:
+            image_file = await image.to_file()
+            await inter.send(embed=Emote(name=name, image=image_file))
 
 
 def setup(bot: Bot) -> None:
