@@ -46,5 +46,8 @@
     "COMMAND_EMOTE_ARG_NAME": "nome",
     "COMMAND_EMOTE_ARG_NAME_DESC": "Nome do emote.",
     "COMMAND_EMOTE_ARG_IMAGE": "emote",
-    "COMMAND_EMOTE_ARG_IMAGE_DESC": "Imagem do emote."
+    "COMMAND_EMOTE_ARG_IMAGE_DESC": "Imagem do emote.",
+    "COMMAND_EMOTE_ERR_TITLE": "Erro ao criar o emote `{}`",
+    "COMMAND_EMOTE_ERR_WITHOUT_PERM": "Você não tem permissão para gerenciar emotes.",
+    "COMMAND_EMOTE_ERR_LARGE_IMAGE": "A imagem é muito grande. Por favor, verifique a [documentação]({})."
 }

@@ -42,9 +42,12 @@
     "COMMAND_UPTIME_MESSAGE": "Je suis en ligne depuis",
     "COMMAND_UPTIME_DESC": "Vérifiez combien de temps le bot est en ligne.",
     "COMMAND_EMOTE": "emote",
-    "COMMAND_EMOTE_DESC": "Crie um emote.",
-    "COMMAND_EMOTE_ARG_NAME": "nome",
-    "COMMAND_EMOTE_ARG_NAME_DESC": "Nome do emote.",
+    "COMMAND_EMOTE_DESC": "Créer une emote.",
+    "COMMAND_EMOTE_ARG_NAME": "nom",
+    "COMMAND_EMOTE_ARG_NAME_DESC": "Nom de l'émote.",
     "COMMAND_EMOTE_ARG_IMAGE": "emote",
-    "COMMAND_EMOTE_ARG_IMAGE_DESC": "Imagem do emote."
+    "COMMAND_EMOTE_ARG_IMAGE_DESC": "Image d'émote.",
+    "COMMAND_EMOTE_ERR_TITLE": "Erreur lors de la création de l'émote `{}`",
+    "COMMAND_EMOTE_ERR_WITHOUT_PERM": "Vous n'êtes pas autorisé à gérer les émotes.",
+    "COMMAND_EMOTE_ERR_LARGE_IMAGE": "L'image est très grande. Veuillez consulter la [documentation]({})."
 }
