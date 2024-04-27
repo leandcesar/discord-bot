@@ -47,6 +47,7 @@
     "COMMAND_EMOTE_ARG_NAME_DESC": "Nom de l'émote.",
     "COMMAND_EMOTE_ARG_IMAGE": "emote",
     "COMMAND_EMOTE_ARG_IMAGE_DESC": "Image d'émote.",
+    "COMMAND_EMOTE_TITLE": "Nouvelle emote créée (`{}`)",
     "COMMAND_EMOTE_ERR_TITLE": "Erreur lors de la création de l'émote `{}`",
     "COMMAND_EMOTE_ERR_WITHOUT_PERM": "Vous n'êtes pas autorisé à gérer les émotes.",
     "COMMAND_EMOTE_ERR_LARGE_IMAGE": "L'image est très grande. Veuillez consulter la [documentation]({})."

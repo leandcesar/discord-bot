@@ -22,9 +22,19 @@ class Uptime(disnake.Embed):
 
 
 class Emote(disnake.Embed):
-    def __init__(self, *, name: str, image: disnake.File) -> None:
+    def __init__(
+        self,
+        *,
+        name: str,
+        image: disnake.File,
+        inter: disnake.GuildCommandInteraction,
+    ) -> None:
+        locale = inter.locale.name.replace("_", "-")
+        title = inter.bot.i18n.get(key="COMMAND_EMOTE_TITLE")[locale]
+        title = title.format(name)
+
         super().__init__(
-            title=f"New Emote `{name}`",
+            title=title,
             color=disnake.Colour.green(),
         )
         self.set_image(file=image)
@@ -104,14 +114,15 @@ class Misc(commands.Cog):
             return
 
         image_bin = await image.read()
+        emote = None
 
         try:
-            await inter.guild.create_custom_emoji(name=name, image=image_bin)
+            emote = await inter.guild.create_custom_emoji(name=name, image=image_bin)
         except Exception as err:
             await inter.send(err)
         else:
             image_file = await image.to_file()
-            await inter.send(embed=Emote(name=name, image=image_file))
+            await inter.send(embed=Emote(name=emote.name, image=image_file, inter=inter))
 
 
 def setup(bot: Bot) -> None:
