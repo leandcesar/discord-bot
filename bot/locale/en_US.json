@@ -40,5 +40,11 @@
     "COMMAND_UNDO_EDIT": "Undo edit",
     "COMMAND_UPTIME": "uptime",
     "COMMAND_UPTIME_MESSAGE": "I've been online for",
-    "COMMAND_UPTIME_DESC": "Check how long the bot has been online."
+    "COMMAND_UPTIME_DESC": "Check how long the bot has been online.",
+    "COMMAND_EMOTE": "emote",
+    "COMMAND_EMOTE_DESC": "Crie um emote.",
+    "COMMAND_EMOTE_ARG_NAME": "nome",
+    "COMMAND_EMOTE_ARG_NAME_DESC": "Nome do emote.",
+    "COMMAND_EMOTE_ARG_IMAGE": "emote",
+    "COMMAND_EMOTE_ARG_IMAGE_DESC": "Imagem do emote."
 }
