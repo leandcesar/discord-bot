@@ -26,7 +26,7 @@ build:
 	@docker-compose build
 
 up:
-	@docker-compose up
+	@docker-compose up bot
 
 down:
 	@docker-compose down --rmi all --volumes --remove-orphans
@@ -45,10 +45,12 @@ reinstall: uninstall install
 version: $(VENV)/bin/activate
 	@$(PYTHON) --version
 	@$(PIP) freeze
+	@$(VENV)/bin/prisma py version
 
 lint: $(VENV)/bin/activate
 	@$(VENV)/bin/pre-commit run mypy
 	@$(VENV)/bin/pre-commit run ruff
+	@$(VENV)/bin/prisma validate --schema=./bot/db/schema.prisma
 
 formatter: $(VENV)/bin/activate
 	@$(VENV)/bin/pre-commit run black
@@ -56,6 +58,7 @@ formatter: $(VENV)/bin/activate
 	@$(VENV)/bin/pre-commit run check-docstring-first
 	@$(VENV)/bin/pre-commit run end-of-file-fixer
 	@$(VENV)/bin/pre-commit run trailing-whitespace
+	@$(VENV)/bin/prisma format --schema=./bot/db/schema.prisma
 
 format: formatter
 
@@ -81,3 +84,18 @@ clean:
 	-@rm -fr .pytest_cache
 	-@rm -fr .mypy_cache
 	-@rm -fr .ruff_cache
+
+db-generate: $(VENV)/bin/activate
+	@$(VENV)/bin/prisma generate --schema=./bot/db/schema.prisma
+
+db-pull: $(VENV)/bin/activate
+	@$(VENV)/bin/prisma db pull --schema=./bot/db/schema.prisma
+
+db-push: $(VENV)/bin/activate
+	@$(VENV)/bin/prisma db push --schema=./bot/db/schema.prisma
+
+db-migrate: $(VENV)/bin/activate
+	@$(VENV)/bin/prisma migrate dev --name "$(name)" --schema=./bot/db/schema.prisma
+
+db-studio: $(VENV)/bin/activate
+	@$(VENV)/bin/prisma studio --schema=./bot/db/schema.prisma
