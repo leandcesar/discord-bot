@@ -45,7 +45,7 @@ class EmoteError(disnake.Embed):
         self,
         *,
         name: str,
-        err_enum: EmoteErrorEnum,
+        err_enum: EmoteErrorEnum | None = None,
         inter: disnake.GuildCommandInteraction,
     ) -> None:
         locale = inter.locale.name.replace("_", "-")
@@ -79,7 +79,7 @@ class EmoteError(disnake.Embed):
         self.set_image(url=gif_error)
 
 
-class Emote(disnake.Embed):
+class Emote(commands.Cog):
     def __init__(self, bot: Bot) -> None:
         self.bot = bot
 
@@ -104,30 +104,30 @@ class Emote(disnake.Embed):
             name="url",  # Localized(key="COMMAND_EMOTE_ADD_ARG_URL"),
             description="url",  # Localized(key="COMMAND_EMOTE_ADD_ARG_URL_DESC"),
         ),
-        image: disnake.Attachment
+        file: disnake.Attachment
         | None = commands.Param(
             None,
-            name=Localized(key="COMMAND_EMOTE_ADD_ARG_IMAGE"),
-            description=Localized(key="COMMAND_EMOTE_ADD_ARG_IMAGE_DESC"),
+            name=Localized(key="COMMAND_EMOTE_ADD_ARG_FILE"),
+            description=Localized(key="COMMAND_EMOTE_ADD_ARG_FILE_DESC"),
         ),
     ) -> None:
         image_bin = None
+        image_file = None
+
         if not inter.permissions.manage_emojis:
             await inter.send(embed=EmoteError(name=name, err_enum=EmoteErrorEnum.WITHOUT_PERMISSION, inter=inter))
             return
 
         if url is not None:
-            async with aiohttp.ClientSession() as session:
-                async with session.get(url) as response:
-                    response.raise_for_status()
-                    image_bin = await response.read()
-
-                    image_bytes = pil.save_image(pil.open_image(image_bin))
-                    image_file = disnake.File(fp=image_bytes, filename="tmp.png")
-        elif image is not None:
-            image_file = await image.to_file()
+            image_bin, image_file = await load_image_from_url(url)
+        elif file is not None:
+            image_bin, image_file = await load_image_from_attachment(file)
         else:
             await inter.send(embed=EmoteError(name=name, err_enum=EmoteErrorEnum.NO_EMOTE_ARGS, inter=inter))
+            return
+
+        if image_bin is None or image_file is None:
+            await inter.send(embed=EmoteError(name=name, inter=inter))
             return
 
         if image_file.bytes_length >= MAX_IMAGE_BYTES_SIZE:
@@ -141,6 +141,26 @@ class Emote(disnake.Embed):
             await inter.send(err)
         else:
             await inter.send(embed=EmoteEmbed(name=emote.name, image=image_file, inter=inter))
+
+
+async def load_image_from_url(url: str) -> tuple[bytes | None, disnake.File | None]:
+    async with aiohttp.ClientSession() as session:
+        async with session.get(url) as response:
+            response.raise_for_status()
+            image_bin = await response.read()
+
+            image_bytes = pil.save_image(pil.open_image(image_bin))
+            image_file = disnake.File(fp=image_bytes, filename="tmp.png")
+
+            return image_bin, image_file
+    return None, None
+
+
+async def load_image_from_attachment(attachment: disnake.Attachment) -> tuple[bytes, disnake.File]:
+    image_file = await attachment.to_file()
+    image_bin = await attachment.read()
+
+    return image_bin, image_file
 
 
 def setup(bot: Bot) -> None:
