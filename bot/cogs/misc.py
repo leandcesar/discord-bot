@@ -2,15 +2,7 @@ import disnake
 from disnake.ext import commands
 
 from bot.core import Bot
-
-
-class Uptime(disnake.Embed):
-    def __init__(self, *, description: str, **kwargs) -> None:
-        super().__init__(
-            title="Uptime",
-            description=description,
-            color=disnake.Colour.light_gray(),
-        )
+from bot.ext import Embed
 
 
 class Misc(commands.Cog):
@@ -19,10 +11,11 @@ class Misc(commands.Cog):
         """
         Check how long the bot has been online. {{UPTIME}}
         """
-        locale_name = inter.locale.name.replace("_", "-")
-        message = inter.bot.i18n.get(key="UPTIME_MESSAGE")[locale_name]
-        timestamp = int(inter.bot.init_time.timestamp())
-        await inter.send(embed=Uptime(description=f"{message} <t:{timestamp}:R>"))
+        await inter.response.defer()
+        message = inter.bot.localized("UPTIME_MESSAGE", locale=inter.locale)
+        description = message.format(timestamp=f"<t:{inter.bot.init_timestamp}:R>")
+        embed = Embed(inter, description=description)
+        await inter.edit_original_response(embed=embed)
 
 
 def setup(bot: Bot) -> None:

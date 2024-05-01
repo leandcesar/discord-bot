@@ -2,6 +2,7 @@ import disnake
 from disnake.ext import commands
 
 from bot.core import Bot
+from bot.ext import Embed
 from bot.services import pil
 
 
@@ -20,13 +21,16 @@ class Guild(commands.Cog):
         name: Name {{NAME}}
         emoji: Emoji {{EMOJI}}
         """
+        await inter.response.defer()
         image_binary = await image.read()
         image_binary = pil.resize_image(image_binary, size=(320, 320))
         file = disnake.File(fp=image_binary, filename="sticker.png")
         guild_sticker = await inter.guild.create_sticker(name=name, emoji=emoji, file=file)
         image_binary.close()
         file = await guild_sticker.to_file()
-        await inter.send(file=file)
+        embed = Embed(inter, image={"file": file})
+        await inter.edit_original_response(embed=embed)
+        file.close()
 
 
 def setup(bot: Bot) -> None:

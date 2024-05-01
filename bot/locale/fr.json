@@ -40,5 +40,5 @@
     "UNDO_EDIT_NAME": "Annuler la modification",
     "UPTIME_NAME": "uptime",
     "UPTIME_DESCRIPTION": "Vérifiez combien de temps le bot est en ligne",
-    "UPTIME_MESSAGE": "Je suis en ligne depuis"
+    "UPTIME_MESSAGE": "Je suis en ligne depuis {timestamp}"
 }

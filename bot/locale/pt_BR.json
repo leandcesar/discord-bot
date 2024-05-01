@@ -40,5 +40,5 @@
     "UNDO_EDIT_NAME": "Desfazer edição",
     "UPTIME_NAME": "uptime",
     "UPTIME_DESCRIPTION": "Veja há quanto tempo o bot está online",
-    "UPTIME_MESSAGE": "Estou online"
+    "UPTIME_MESSAGE": "Estou online {timestamp}"
 }

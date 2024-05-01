@@ -40,5 +40,5 @@
     "UNDO_EDIT_NAME": "Undo edit",
     "UPTIME_NAME": "uptime",
     "UPTIME_DESCRIPTION": "Check how long the bot has been online",
-    "UPTIME_MESSAGE": "I've been online for"
+    "UPTIME_MESSAGE": "I've been online for {timestamp}"
 }

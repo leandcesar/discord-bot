@@ -4,28 +4,28 @@ from typing import TypedDict
 import disnake
 
 
-class Image(TypedDict):
+class Image(TypedDict, total=False):
     url: str | None
     file: disnake.File | None
 
 
-class Thumbnail(TypedDict):
+class Thumbnail(TypedDict, total=False):
     url: str | None
     file: disnake.File | None
 
 
-class Author(TypedDict):
+class Author(TypedDict, total=False):
     name: str
     url: str | None
     icon_url: str | None
 
 
-class Footer(TypedDict):
+class Footer(TypedDict, total=False):
     text: str
     icon_url: str | None
 
 
-class Field(TypedDict):
+class Field(TypedDict, total=False):
     name: str
     value: str
     inline: bool
@@ -38,11 +38,11 @@ class Embed(disnake.Embed):
         *,
         title: str | None = None,
         description: str | None = None,
-        image: Image | None = None,
-        thumbnail: Thumbnail | None = None,
-        author: Author | disnake.Member | disnake.Guild = None,
-        footer: Footer | disnake.Member | disnake.Guild = None,
-        fields: list[Field] | None = None,
+        image: Image | dict[str, str] | None = None,
+        thumbnail: Thumbnail | dict[str, str] | None = None,
+        author: Author | disnake.Member | disnake.Guild | dict[str, str] = None,
+        footer: Footer | disnake.Member | disnake.Guild | dict[str, str] = None,
+        fields: list[Field | dict[str, str]] | None = None,
         timestamp: datetime.datetime | None = None,
         color: disnake.Colour = disnake.Colour.light_gray(),
         **kwargs,
@@ -70,7 +70,7 @@ class Embed(disnake.Embed):
         if fields:
             self._add_fields(fields)
 
-    def _set_author(self, author: Author | disnake.Member | disnake.Guild) -> None:
+    def _set_author(self, author: Author | disnake.Member | disnake.Guild | dict[str, str]) -> None:
         if isinstance(author, disnake.Member):
             self.set_author(
                 name=author.display_name,
@@ -84,7 +84,7 @@ class Embed(disnake.Embed):
         else:
             self.set_author(**author)
 
-    def _set_footer(self, footer: Footer | disnake.Member | disnake.Guild) -> None:
+    def _set_footer(self, footer: Footer | disnake.Member | disnake.Guild | dict[str, str]) -> None:
         if isinstance(footer, disnake.Member):
             self.set_footer(
                 text=footer.display_name,
@@ -98,6 +98,6 @@ class Embed(disnake.Embed):
         else:
             self.set_footer(**footer)
 
-    def _add_fields(self, fields: list[Field]) -> None:
+    def _add_fields(self, fields: list[Field | dict[str, str]]) -> None:
         for field in fields:
             self.add_field(**field)
