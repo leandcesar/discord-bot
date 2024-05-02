@@ -2,10 +2,9 @@ import datetime
 
 import disnake
 from disnake.ext import commands
-from disnake.i18n import Localized
 
 from bot.core import Bot
-from bot.ext import application_webhook
+from bot.ext import Embed, application_webhook
 
 
 def ago(dt: datetime.datetime) -> datetime.timedelta:
@@ -18,56 +17,46 @@ def seconds_ago(dt: datetime.datetime) -> int:
 
 class Stalker(commands.Cog):
     def __init__(self, bot: Bot) -> None:
-        self.bot = bot
+        self.deleted_message_history: list[disnake.Message] = []
+        self.edited_message_history: list[disnake.Message] = []
 
     @commands.Cog.listener()
     async def on_message_edit(self, before: disnake.Message, after: disnake.Message) -> None:
-        self.bot.edited_message_history.append(before)
-        self.bot.edited_message_history = [
-            m for m in self.bot.edited_message_history if seconds_ago(m.created_at) <= 600
-        ]
+        self.edited_message_history.append(before)
+        self.edited_message_history = [m for m in self.edited_message_history if seconds_ago(m.created_at) <= 600]
 
     @commands.Cog.listener()
     async def on_message_delete(self, message: disnake.Message) -> None:
-        self.bot.deleted_message_history.append(message)
-        self.bot.deleted_message_history = [
-            m for m in self.bot.deleted_message_history if seconds_ago(m.created_at) <= 600
-        ]
+        self.deleted_message_history.append(message)
+        self.deleted_message_history = [m for m in self.deleted_message_history if seconds_ago(m.created_at) <= 600]
 
     @commands.Cog.listener()
     async def on_bulk_message_delete(self, messages: list[disnake.Message]) -> None:
-        self.bot.deleted_message_history.extend(messages)
-        self.bot.deleted_message_history = [
-            m for m in self.bot.deleted_message_history if seconds_ago(m.created_at) <= 600
-        ]
+        self.deleted_message_history.extend(messages)
+        self.deleted_message_history = [m for m in self.deleted_message_history if seconds_ago(m.created_at) <= 600]
 
-    @commands.slash_command(
-        name=Localized(key="COMMAND_FAKE"),
-        description=Localized("", key="COMMAND_FAKE_DESC"),
-    )
+    @commands.slash_command()
     async def fake(
         self,
         inter: disnake.GuildCommandInteraction,
-        content: str = commands.Param(
-            name=Localized(key="ARG_CONTENT"), description=Localized("", key="ARG_CONTENT_DESC")
-        ),
-        member: disnake.Member
-        | None = commands.Param(
-            None, name=Localized(key="ARG_MEMBER"), description=Localized("", key="ARG_MEMBER_DESC")
-        ),
-        name: str
-        | None = commands.Param(
-            None, name=Localized(key="ARG_NAME"), description=Localized("", key="ARG_NAME_DESC")
-        ),
-        image: disnake.Attachment
-        | None = commands.Param(
-            None, name=Localized(key="ARG_IMAGE"), description=Localized("", key="ARG_IMAGE_DESC")
-        ),
-        channel: disnake.TextChannel
-        | None = commands.Param(
-            None, name=Localized(key="ARG_CHANNEL"), description=Localized("", key="ARG_CHANNEL_DESC")
-        ),
+        content: str,
+        member: disnake.Member | None = None,
+        name: str | None = None,
+        image: disnake.Attachment | None = None,
+        channel: disnake.TextChannel | None = None,
     ) -> None:
+        """
+        Send a message faking being someone else. {{FAKE}}
+
+        Parameters
+        ----------
+        content: Message content {{CONTENT}}
+        member: Server user {{MEMBER}}
+        name: Name {{NAME}}
+        image: Image attachment {{IMAGE}}
+        channel: Server channel {{CHANNEL}}
+        """
+        await inter.response.defer(ephemeral=True)
         if not member:
             member = inter.author
         if not name:
@@ -79,14 +68,15 @@ class Stalker(commands.Cog):
         avatar_url = image.url if image else None
         webhook = await application_webhook(inter, channel=channel)
         message = await webhook.send(content, username=name, avatar_url=avatar_url, wait=True)
-        await inter.send(message.jump_url, ephemeral=True)
+        embed = Embed(inter, description=message.jump_url)
+        await inter.edit_original_response(embed=embed)
 
-    @commands.slash_command(
-        name=Localized(key="COMMAND_UNDO"),
-        description=Localized("", key="COMMAND_UNDO_DESC"),
-    )
+    @commands.slash_command()
     async def undo(self, inter: disnake.GuildCommandInteraction) -> None:
-        for m in self.bot.deleted_message_history[::-1]:
+        """
+        Undo the last deletion or edit of a message in the channel (up to 5 minutes). {{UNDO}}
+        """
+        for m in self.deleted_message_history[::-1]:
             if m.channel.id == inter.channel.id:
                 await inter.response.defer(ephemeral=True)
                 member = await inter.guild.fetch_member(m.author.id)
@@ -101,18 +91,18 @@ class Stalker(commands.Cog):
                     delete_after=ttl,
                     wait=True,
                 )
-                await inter.edit_original_response(message.jump_url)
+                embed = Embed(inter, description=message.jump_url)
+                await inter.edit_original_response(embed=embed)
                 return None
 
-    @commands.message_command(name=Localized("Undo edit", key="COMMAND_UNDO_EDIT"))
-    async def undo_edit(
-        self,
-        inter: disnake.MessageCommandInteraction,
-        message: disnake.Message,
-    ):
+    @commands.message_command()
+    async def undo_edit(self, inter: disnake.MessageCommandInteraction, message: disnake.Message) -> None:
+        """
+        {{UNDO_EDIT}}
+        """
         if not message.edited_at:
             return None
-        for m in self.bot.edited_message_history[::-1]:
+        for m in self.edited_message_history[::-1]:
             if m.channel.id == message.channel.id:
                 member = await inter.guild.fetch_member(m.author.id)
                 ttl = 600 - seconds_ago(m.edited_at)
@@ -126,11 +116,8 @@ class Stalker(commands.Cog):
                     delete_after=ttl,
                     wait=True,
                 )
-                await inter.response.send_message(
-                    message.jump_url,
-                    delete_after=ttl,
-                    ephemeral=True,
-                )
+                embed = Embed(inter, description=message.jump_url)
+                await inter.response.send_message(embed=embed, ephemeral=True)
                 return None
 
 
