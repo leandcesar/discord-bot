@@ -101,8 +101,8 @@ class Emote(commands.Cog):
         url: str
         | None = commands.Param(
             None,
-            name="url",  # Localized(key="COMMAND_EMOTE_ADD_ARG_URL"),
-            description="url",  # Localized(key="COMMAND_EMOTE_ADD_ARG_URL_DESC"),
+            name="url",
+            description=Localized(key="COMMAND_EMOTE_ADD_ARG_URL_DESC"),
         ),
         file: disnake.Attachment
         | None = commands.Param(

@@ -50,7 +50,7 @@
     "COMMAND_EMOTE_ADD_ARG_URL": "url",
     "COMMAND_EMOTE_ADD_ARG_URL_DESC": "URL avec l'image de l'émote.",
     "COMMAND_EMOTE_ADD_ARG_FILE": "fichier",
-    "COMMAND_EMOTE_ADD_ARG_FILE_DESC": "Image d'émote.",
+    "COMMAND_EMOTE_ADD_ARG_FILE_DESC": "Fichier avec l'image de l'émote.",
     "COMMAND_EMOTE_ADD_TITLE": "Nouvelle emote créée (`{}`)",
     "COMMAND_EMOTE_ADD_ERR_TITLE": "Erreur lors de la création de l'émote `{}`",
     "COMMAND_EMOTE_ADD_ERR_WITHOUT_PERM": "Vous n'êtes pas autorisé à gérer les émotes.",

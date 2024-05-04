@@ -50,7 +50,7 @@
     "COMMAND_EMOTE_ADD_ARG_URL": "url",
     "COMMAND_EMOTE_ADD_ARG_URL_DESC": "URL with the emote image.",
     "COMMAND_EMOTE_ADD_ARG_FILE": "file",
-    "COMMAND_EMOTE_ADD_ARG_FILE_DESC": "Emote image.",
+    "COMMAND_EMOTE_ADD_ARG_FILE_DESC": "Fime with the emote image.",
     "COMMAND_EMOTE_ADD_TITLE": "New emote created (`{}`)",
     "COMMAND_EMOTE_ADD_ERR_TITLE": "Erro on creating emote `{}`",
     "COMMAND_EMOTE_ADD_ERR_WITHOUT_PERM": "You do not have permission to manage emotes.",
