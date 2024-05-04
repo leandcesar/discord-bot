@@ -77,6 +77,7 @@ class EmoteError(disnake.Embed):
 
 
 class Emote(commands.Cog):
+    @commands.has_permissions(manage_emojis=True)
     @commands.slash_command()
     async def emote_add(
         self,
@@ -98,9 +99,9 @@ class Emote(commands.Cog):
         image_bin = None
         image_file = None
 
-        if not inter.permissions.manage_emojis:
-            await inter.send(embed=EmoteError(name=name, err_enum=EmoteErrorEnum.WITHOUT_PERMISSION, inter=inter))
-            return
+        # if not inter.permissions.manage_emojis:
+        #     await inter.send(embed=EmoteError(name=name, err_enum=EmoteErrorEnum.WITHOUT_PERMISSION, inter=inter))
+        #     return
 
         if url is not None:
             image_bin, image_file = await load_image_from_url(url)
