@@ -3,7 +3,6 @@ from enum import Enum
 import aiohttp
 import disnake
 from disnake.ext import commands
-from disnake.i18n import Localized
 
 from bot.core import Bot
 from bot.services import pil
@@ -66,7 +65,7 @@ class EmoteError(disnake.Embed):
 
             case EmoteErrorEnum.NO_EMOTE_ARGS:
                 gif_error = CHOOSE_GIF
-                description = "USE UM DOS DOIS ARGUMENTOS OPCIONAIS"
+                description = inter.bot.localized(key="COMMAND_EMOTE_ADD_ERR_NO_EMOTE_ARGS", locale=inter.locale)
 
         super().__init__(
             title=title,
@@ -78,27 +77,24 @@ class EmoteError(disnake.Embed):
 
 
 class Emote(commands.Cog):
-    @commands.slash_command(name=Localized(key="COMMAND_EMOTE"), description=Localized(key="COMMAND_EMOTE_ADD_DESC"))
+    @commands.slash_command()
     async def emote_add(
         self,
         inter: disnake.GuildCommandInteraction,
-        name: str = commands.Param(
-            name=Localized(key="COMMAND_EMOTE_ADD_ARG_NAME"),
-            description=Localized(key="COMMAND_EMOTE_ADD_ARG_NAME_DESC"),
-        ),
-        url: str
-        | None = commands.Param(
-            None,
-            name="url",
-            description=Localized(key="COMMAND_EMOTE_ADD_ARG_URL_DESC"),
-        ),
-        file: disnake.Attachment
-        | None = commands.Param(
-            None,
-            name=Localized(key="COMMAND_EMOTE_ADD_ARG_FILE"),
-            description=Localized(key="COMMAND_EMOTE_ADD_ARG_FILE_DESC"),
-        ),
+        name: str,
+        url: str | None = None,
+        file: disnake.Attachment | None = None,
     ) -> None:
+        """
+        Add an emote to the server. {{EMOTE_ADD}}
+
+        Parameters
+        ----------
+        name: Name {{NAME}}
+        url: Image attachment {{URL}}
+        file: Emoji {{FILE}}
+        """
+
         image_bin = None
         image_file = None
 
