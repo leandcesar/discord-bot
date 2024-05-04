@@ -80,9 +80,6 @@ class EmoteError(disnake.Embed):
 
 
 class Emote(commands.Cog):
-    def __init__(self, bot: Bot) -> None:
-        self.bot = bot
-
     @commands.slash_command(name=Localized(key="COMMAND_EMOTE"), description=Localized(key="COMMAND_EMOTE_DESC"))
     async def emote(
         self,
@@ -164,4 +161,4 @@ async def load_image_from_attachment(attachment: disnake.Attachment) -> tuple[by
 
 
 def setup(bot: Bot) -> None:
-    bot.add_cog(Emote(bot))
+    bot.add_cog(Emote())
