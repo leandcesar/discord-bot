@@ -2,16 +2,47 @@ version: "3"
 
 services:
   bot:
-    build: .
-    image: discord/bot:latest
     container_name: bot
+    image: discord/bot:latest
+    build: .
     env_file:
       - .env
+    # depends_on:
+    #   - db
     restart: unless-stopped
-    stdin_open: true
-    tty: true
-    networks:
-      - internal
 
-networks:
-  internal: {}
+  db:
+    container_name: db
+    image: postgres:16
+    environment:
+      - POSTGRES_USER=${POSTGRES_USER}
+      - POSTGRES_PASSWORD=${POSTGRES_PASSWORD}
+      - POSTGRES_DB=${POSTGRES_DB}
+    ports:
+      - 5432:5432
+    volumes:
+      - pg-data:/var/lib/postgresql/data
+    restart: always
+    healthcheck:
+      test: ["CMD", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4:8
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=${PGADMIN_EMAIL}
+      - PGADMIN_DEFAULT_PASSWORD=${PGADMIN_PASSWORD}
+    ports:
+      - 8080:80
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin
+    depends_on:
+      - db
+    restart: always
+
+volumes:
+  pg-data:
+  pgadmin-data:

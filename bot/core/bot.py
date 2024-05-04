@@ -1,5 +1,5 @@
-import datetime
 import logging
+import time
 
 import disnake
 from disnake.ext import commands
@@ -19,6 +19,7 @@ class Bot(commands.Bot):
         self.debug = debug
         self.logger = logger_cls
         self.logger.setLevel(logger_level)
+        self.init_timestamp = int(time.time())
         command_sync_flags = commands.CommandSyncFlags.default()
         command_sync_flags.sync_commands_debug = self.debug
         command_prefix = commands.when_mentioned_or(bot_prefix) if bot_prefix else commands.when_mentioned
@@ -35,9 +36,14 @@ class Bot(commands.Bot):
             strict_localization=True,
             **kwargs,
         )
-        self.deleted_message_history: list[disnake.Message] = []
-        self.edited_message_history: list[disnake.Message] = []
-        self.init_time = datetime.datetime.now(tz=datetime.timezone.utc)
+
+    def localized(self, key: str, *, locale: disnake.Locale) -> str:
+        i18n = self.i18n.get(key=key)
+        try:
+            locale_name = locale.name.replace("_", "-")
+            return i18n[locale_name]
+        except Exception:
+            return i18n.values()[0]
 
     async def on_ready(self) -> None:
         self.logger.info(f"Logged in as {self.user}")
