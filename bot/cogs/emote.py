@@ -5,7 +5,7 @@ import disnake
 from disnake.ext import commands
 
 from bot.core import Bot
-from bot.services import pil
+from bot.services import pil, url_validator
 
 # Source: https://discord.com/blog/beginners-guide-to-custom-emojis#heading-4
 MAX_IMAGE_BYTES_SIZE = 256 * 1000
@@ -36,6 +36,7 @@ class EmoteErrorEnum(Enum):
     WITHOUT_PERMISSION = 1
     LARGE_IMAGE = 2
     NO_EMOTE_ARGS = 3
+    WRONG_EMOTE_URL = 4
 
 
 class EmoteError(disnake.Embed):
@@ -64,6 +65,11 @@ class EmoteError(disnake.Embed):
                 ).format("https://discord.com/blog/beginners-guide-to-custom-emojis#heading-4")
 
             case EmoteErrorEnum.NO_EMOTE_ARGS:
+                gif_error = CHOOSE_GIF
+                description = inter.bot.localized(key="COMMAND_EMOTE_ADD_ERR_NO_EMOTE_ARGS", locale=inter.locale)
+
+            case EmoteErrorEnum.WRONG_EMOTE_URL:
+                # TODO: Add an error gif and message
                 gif_error = CHOOSE_GIF
                 description = inter.bot.localized(key="COMMAND_EMOTE_ADD_ERR_NO_EMOTE_ARGS", locale=inter.locale)
 
@@ -104,7 +110,11 @@ class Emote(commands.Cog):
         #     return
 
         if url is not None:
-            image_bin, image_file = await load_image_from_url(url)
+            if url_validator.is_valid_discord_url(url):
+                image_bin, image_file = await load_image_from_url(url)
+            else:
+                await inter.send(embed=EmoteError(name=name, err_enum=EmoteErrorEnum.WRONG_EMOTE_URL, inter=inter))
+                return
         elif file is not None:
             image_bin, image_file = await load_image_from_attachment(file)
         else:
