@@ -51,5 +51,6 @@
     "COMMAND_EMOTE_ADD_ERR_TITLE": "Erreur lors de la création de l'émote `{}`",
     "COMMAND_EMOTE_ADD_ERR_WITHOUT_PERM": "Vous n'êtes pas autorisé à gérer les émotes.",
     "COMMAND_EMOTE_ADD_ERR_LARGE_IMAGE": "L'image est très grande. Veuillez consulter la [documentation]({}).",
-    "COMMAND_EMOTE_ADD_ERR_NO_EMOTE_ARGS": "Veuillez utiliser l'un des deux arguments facultatifs."
+    "COMMAND_EMOTE_ADD_ERR_NO_EMOTE_ARGS": "Veuillez utiliser l'un des deux arguments facultatifs.",
+    "COMMAND_EMOTE_ADD_ERR_WRONG_URL": "Please only use images uploaded to Discord."
 }

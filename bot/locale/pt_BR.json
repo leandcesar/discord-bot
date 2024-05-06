@@ -51,5 +51,6 @@
     "COMMAND_EMOTE_ADD_ERR_TITLE": "Erro ao criar o emote `{}`",
     "COMMAND_EMOTE_ADD_ERR_WITHOUT_PERM": "Você não tem permissão para gerenciar emotes.",
     "COMMAND_EMOTE_ADD_ERR_LARGE_IMAGE": "A imagem é muito grande. Por favor, verifique a [documentação]({}).",
-    "COMMAND_EMOTE_ADD_ERR_NO_EMOTE_ARGS": "Por favor, utilize um dos dois argumentos opcionais."
+    "COMMAND_EMOTE_ADD_ERR_NO_EMOTE_ARGS": "Por favor, utilize um dos dois argumentos opcionais.",
+    "COMMAND_EMOTE_ADD_ERR_WRONG_URL": "Por favor, apenas utilize imagens upadas no Discord."
 }

@@ -12,6 +12,7 @@ MAX_IMAGE_BYTES_SIZE = 256 * 1000
 NO_PERM_GIF = "https://media1.tenor.com/m/8wwLg1lZS_gAAAAC/denied-incredibles.gif"
 LARGE_GIF = "https://media1.tenor.com/m/SGCLBFPTK4sAAAAC/im-big-boned-eric-cartman.gif"
 CHOOSE_GIF = "https://media1.tenor.com/m/3C4bAf7b8C0AAAAC/the-matrix-morpheus.gif"
+WRONG_URL_GIF = "https://media1.tenor.com/m/MLlF-ChHnoQAAAAC/aesthetic-error.gif"
 
 
 class EmoteEmbed(disnake.Embed):
@@ -70,8 +71,8 @@ class EmoteError(disnake.Embed):
 
             case EmoteErrorEnum.WRONG_EMOTE_URL:
                 # TODO: Add an error gif and message
-                gif_error = CHOOSE_GIF
-                description = inter.bot.localized(key="COMMAND_EMOTE_ADD_ERR_NO_EMOTE_ARGS", locale=inter.locale)
+                gif_error = WRONG_URL_GIF
+                description = inter.bot.localized(key="COMMAND_EMOTE_ADD_ERR_WRONG_URL", locale=inter.locale)
 
         super().__init__(
             title=title,
