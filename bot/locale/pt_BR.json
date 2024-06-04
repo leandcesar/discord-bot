@@ -40,5 +40,17 @@
     "UNDO_EDIT_NAME": "Desfazer edição",
     "UPTIME_NAME": "uptime",
     "UPTIME_DESCRIPTION": "Veja há quanto tempo o bot está online",
-    "UPTIME_MESSAGE": "Estou online {timestamp}"
+    "UPTIME_MESSAGE": "Estou online {timestamp}",
+    "EMOTE_ADD_NAME": "emote",
+    "EMOTE_ADD_DESCRIPTION": "Crie um emote.",
+    "URL_NAME": "url",
+    "URL_DESCRIPTION": "URL do emote.",
+    "FILE_NAME": "arquivo",
+    "FILE_DESCRIPTION": "Arquivo do emote.",
+    "COMMAND_EMOTE_ADD_TITLE": "Novo emote criado (`{}`)",
+    "COMMAND_EMOTE_ADD_ERR_TITLE": "Erro ao criar o emote `{}`",
+    "COMMAND_EMOTE_ADD_ERR_WITHOUT_PERM": "Você não tem permissão para gerenciar emotes.",
+    "COMMAND_EMOTE_ADD_ERR_LARGE_IMAGE": "A imagem é muito grande. Por favor, verifique a [documentação]({}).",
+    "COMMAND_EMOTE_ADD_ERR_NO_EMOTE_ARGS": "Por favor, utilize um dos dois argumentos opcionais.",
+    "COMMAND_EMOTE_ADD_ERR_WRONG_URL": "Por favor, apenas utilize imagens upadas no Discord."
 }

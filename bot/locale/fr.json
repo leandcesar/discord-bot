@@ -40,5 +40,17 @@
     "UNDO_EDIT_NAME": "Annuler la modification",
     "UPTIME_NAME": "uptime",
     "UPTIME_DESCRIPTION": "Vérifiez combien de temps le bot est en ligne",
-    "UPTIME_MESSAGE": "Je suis en ligne depuis {timestamp}"
+    "UPTIME_MESSAGE": "Je suis en ligne depuis {timestamp}",
+    "EMOTE_ADD_NAME": "emote",
+    "EMOTE_ADD_DESCRIPTION": "Créer une emote.",
+    "URL_NAME": "url",
+    "URL_DESCRIPTION": "URL de l'émoticône.",
+    "FILE_NAME": "fichier",
+    "FILE_DESCRIPTION": "Fichier d'émoticône.",
+    "COMMAND_EMOTE_ADD_TITLE": "Nouvelle emote créée (`{}`)",
+    "COMMAND_EMOTE_ADD_ERR_TITLE": "Erreur lors de la création de l'émote `{}`",
+    "COMMAND_EMOTE_ADD_ERR_WITHOUT_PERM": "Vous n'êtes pas autorisé à gérer les émotes.",
+    "COMMAND_EMOTE_ADD_ERR_LARGE_IMAGE": "L'image est très grande. Veuillez consulter la [documentation]({}).",
+    "COMMAND_EMOTE_ADD_ERR_NO_EMOTE_ARGS": "Veuillez utiliser l'un des deux arguments facultatifs.",
+    "COMMAND_EMOTE_ADD_ERR_WRONG_URL": "Please only use images uploaded to Discord."
 }
