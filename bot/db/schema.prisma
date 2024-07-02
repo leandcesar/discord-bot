@@ -10,39 +10,57 @@ generator client {
 }
 
 model Guild {
-  id         Int       @id
+  id         BigInt    @id
   created_at DateTime  @default(now())
   updated_at DateTime  @default(now())
   channels   Channel[]
   users      User[]
+  chatbot    Chatbot[]
 }
 
 model Channel {
-  id         Int       @id
+  id         BigInt    @id
   created_at DateTime  @default(now())
   updated_at DateTime  @default(now())
-  guild_id   Int
+  synced_at  DateTime?
+  guild_id   BigInt
   guild      Guild     @relation(fields: [guild_id], references: [id])
   messages   Message[]
 }
 
 model User {
-  id         Int       @id
+  id         BigInt    @id
   created_at DateTime  @default(now())
   updated_at DateTime  @default(now())
-  guild_id   Int
+  guild_id   BigInt
   guild      Guild     @relation(fields: [guild_id], references: [id])
   messages   Message[]
+  chatbot    Chatbot[]
 }
 
 model Message {
-  id         Int       @id
+  id         BigInt    @id
   created_at DateTime  @default(now())
   updated_at DateTime  @default(now())
   edited_at  DateTime?
   deleted_at DateTime?
-  channel_id Int
+  channel_id BigInt
+  user_id    BigInt
   channel    Channel   @relation(fields: [channel_id], references: [id])
-  user_id    Int
   user       User      @relation(fields: [user_id], references: [id])
+}
+
+model Chatbot {
+  created_at DateTime  @default(now())
+  updated_at DateTime  @default(now())
+  name       String?
+  nick       String
+  prompt     String
+  avatar_url String?
+  guild_id   BigInt
+  user_id    BigInt?
+  guild      Guild     @relation(fields: [guild_id], references: [id])
+  user       User?     @relation(fields: [user_id], references: [id])
+
+  @@id([guild_id, nick])
 }

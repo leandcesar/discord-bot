@@ -31,6 +31,15 @@ up:
 down:
 	@docker-compose down --rmi all --volumes --remove-orphans
 
+db_generate:
+	docker-compose run --rm bot prisma generate --schema=./bot/db/schema.prisma
+
+db_push:
+	docker-compose run --rm bot prisma db push --schema=./bot/db/schema.prisma
+
+db_migrate:
+	docker-compose run --rm bot prisma migrate dev --schema=./bot/db/schema.prisma
+
 install: $(VENV)/bin/activate
 	@$(VENV)/bin/pre-commit install
 	@$(VENV)/bin/pre-commit install --hook-type commit-msg
@@ -84,18 +93,3 @@ clean:
 	-@rm -fr .pytest_cache
 	-@rm -fr .mypy_cache
 	-@rm -fr .ruff_cache
-
-db-generate: $(VENV)/bin/activate
-	@$(VENV)/bin/prisma generate --schema=./bot/db/schema.prisma
-
-db-pull: $(VENV)/bin/activate
-	@$(VENV)/bin/prisma db pull --schema=./bot/db/schema.prisma
-
-db-push: $(VENV)/bin/activate
-	@$(VENV)/bin/prisma db push --schema=./bot/db/schema.prisma
-
-db-migrate: $(VENV)/bin/activate
-	@$(VENV)/bin/prisma migrate dev --name "$(name)" --schema=./bot/db/schema.prisma
-
-db-studio: $(VENV)/bin/activate
-	@$(VENV)/bin/prisma studio --schema=./bot/db/schema.prisma

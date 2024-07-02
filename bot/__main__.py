@@ -1,15 +1,15 @@
-from bot import config
-from bot.core import Bot, logger
-
-bot = Bot(
-    bot_prefix=config.BOT_PREFIX,
-    debug=config.DEBUG,
-    logger_cls=logger,
-    logger_level=config.LOG_LEVEL,
-    test_guilds=config.BOT_TEST_DISCORD_GUILD_IDS,
-)
+from bot import Bot, config, logger
 
 if __name__ == "__main__":
-    bot.i18n.load("bot/locale")
-    bot.load_extensions("bot/cogs")
+    bot = Bot(
+        bot_prefix=config.BOT_PREFIX,
+        debug=config.DEBUG,
+        logger_cls=logger,
+        logger_level=config.LOG_LEVEL,
+        test_guilds=config.BOT_TEST_DISCORD_GUILD_IDS,
+    )
+    bot.i18n.load(config.PATH_LOCALE)
+    bot.load_extensions(config.PATH_COGS)
+    bot.load_extensions(config.PATH_LISTENERS)
+    bot.connect_database()
     bot.run(config.BOT_TOKEN)

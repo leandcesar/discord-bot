@@ -1,6 +1,6 @@
 import logging
 
-import disnake  # noqa
+import disnake  # noqa: F401
 
 
 class LoggingFormatter(logging.Formatter):
@@ -20,7 +20,7 @@ class LoggingFormatter(logging.Formatter):
         logging.CRITICAL: red + bold,
     }
 
-    def format(self, record):
+    def format(self, record: logging.LogRecord, /) -> str:
         log_color = self.colors[record.levelno]
         fmt = "(black){asctime}(reset) (levelcolor){levelname:<8}(reset) (green){name}(reset) {message}"
         fmt = fmt.replace("(black)", self.black + self.bold)
@@ -35,8 +35,9 @@ console_handler = logging.StreamHandler()
 console_handler.setFormatter(LoggingFormatter())
 
 logger = logging.getLogger(__name__)
+logger.setLevel(logging.INFO)
 logger.addHandler(console_handler)
 
 disnake_logger = logging.getLogger("disnake")
-disnake_logger.setLevel(logging.INFO)
+disnake_logger.setLevel(logging.WARNING)
 disnake_logger.addHandler(console_handler)

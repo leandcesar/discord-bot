@@ -1,51 +1,30 @@
 import disnake
-from disnake.ext import commands
+from disnake.ext.commands import CheckFailure
 
 
-def user_has_role_icon():
-    def predicate(inter: disnake.GuildCommandInteraction) -> bool:
-        return inter.author.top_role and inter.author.top_role != inter.guild.default_role
-
-    return commands.check(predicate)
-
-
-def guild_has_role_icons_feature():
-    def predicate(inter: disnake.ApplicationCommandInteraction) -> bool:
-        return "ROLE_ICONS" in inter.guild.features
-
-    return commands.check(predicate)
+def user_has_role_icon(inter: disnake.GuildCommandInteraction) -> bool:
+    if not inter.author.top_role or inter.author.top_role == inter.guild.default_role:
+        raise CheckFailure("User has no top_role for icon")
+    return True
 
 
-def user_is_connected():
-    def predicate(inter: disnake.GuildCommandInteraction) -> bool:
-        return inter.author.voice
-
-    return commands.check(predicate)
-
-
-def user_is_disconnected():
-    def predicate(inter: disnake.GuildCommandInteraction) -> bool:
-        return not inter.author.voice
-
-    return commands.check(predicate)
+def guild_has_role_icons_feature(inter: disnake.GuildCommandInteraction) -> bool:
+    if "ROLE_ICONS" not in inter.guild.features:
+        raise CheckFailure("Guild has no ROLE_ICONS feature")
+    return True
 
 
-def bot_is_connected():
-    def predicate(inter: disnake.GuildCommandInteraction) -> bool:
-        return inter.guild.voice_client
-
-    return commands.check(predicate)
-
-
-def bot_is_disconnected():
-    def predicate(inter: disnake.GuildCommandInteraction) -> bool:
-        return not inter.guild.voice_client
-
-    return commands.check(predicate)
+def one_of(*args) -> bool:
+    number_of_args = sum(arg is not None for arg in args)
+    if number_of_args > 1:
+        raise CheckFailure("You can only provide one of the specified arguments.")
+    if number_of_args < 1:
+        raise CheckFailure("You must provide at least one of the specified arguments.")
+    return True
 
 
-def bot_and_user_in_same_channel():
-    def predicate(inter: disnake.GuildCommandInteraction) -> bool:
-        return inter.guild.voice_client.channel == inter.author.voice.channel
-
-    return commands.check(predicate)
+def one_of_or_none(*args) -> bool:
+    number_of_args = sum(arg is not None for arg in args)
+    if number_of_args > 1:
+        raise CheckFailure("You can only provide one of the specified arguments.")
+    return True
