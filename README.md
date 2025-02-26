@@ -109,7 +109,3 @@ make uninstall
 - [disnake](https://docs.disnake.dev/en/stable/): asynchronous Discord API wrapper for Python
 - [AIOHTTP](https://docs.aiohttp.org/en/stable/): asynchronous HTTP Client/Server for Python
 - [Pillow (PIL Fork)](https://pillow.readthedocs.io/en/stable/): imaging library for Python
-- [Imagga API](https://docs.imagga.com/): image recognition API
-- [PostgreSQL](https://www.postgresql.org/): open source relational database
-- [pgAdmin](https://www.pgadmin.org/): open source administration and development platform for [PostgreSQL](https://www.postgresql.org/)
-- [Prisma Client Python](https://prisma-client-py.readthedocs.io/en/stable/): Python ORM built on top of [Prisma](https://www.prisma.io/)

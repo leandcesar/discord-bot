@@ -31,15 +31,6 @@ up:
 down:
 	@docker-compose down --rmi all --volumes --remove-orphans
 
-db_generate:
-	docker-compose run --rm bot prisma generate --schema=./bot/db/schema.prisma
-
-db_push:
-	docker-compose run --rm bot prisma db push --schema=./bot/db/schema.prisma
-
-db_migrate:
-	docker-compose run --rm bot prisma migrate dev --schema=./bot/db/schema.prisma
-
 install: $(VENV)/bin/activate
 	@$(VENV)/bin/pre-commit install
 	@$(VENV)/bin/pre-commit install --hook-type commit-msg
@@ -53,13 +44,11 @@ reinstall: uninstall install
 
 version: $(VENV)/bin/activate
 	@$(PYTHON) --version
-	@$(PIP) freeze
-	@$(VENV)/bin/prisma py version
+	@$(PIP) list
 
 lint: $(VENV)/bin/activate
 	@$(VENV)/bin/pre-commit run mypy
 	@$(VENV)/bin/pre-commit run ruff
-	@$(VENV)/bin/prisma validate --schema=./bot/db/schema.prisma
 
 formatter: $(VENV)/bin/activate
 	@$(VENV)/bin/pre-commit run black
@@ -67,7 +56,6 @@ formatter: $(VENV)/bin/activate
 	@$(VENV)/bin/pre-commit run check-docstring-first
 	@$(VENV)/bin/pre-commit run end-of-file-fixer
 	@$(VENV)/bin/pre-commit run trailing-whitespace
-	@$(VENV)/bin/prisma format --schema=./bot/db/schema.prisma
 
 format: formatter
 
