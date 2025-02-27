@@ -52,6 +52,8 @@ async def on_modal_submit(inter: disnake.ModalInteraction) -> None:
 
 @plugin.listener("on_command_error")
 async def on_command_error(ctx: commands.Context[Bot], e: Exception) -> None:
+    if isinstance(e, commands.errors.CommandNotFound):
+        return None
     logger.error(
         f"{ctx.guild} ({ctx.guild.id}) "
         f"#{ctx.channel} ({ctx.channel.id}) "
@@ -78,7 +80,7 @@ async def on_slash_command_error(inter: disnake.GuildCommandInteraction, e: Exce
 async def on_message_edit(before: disnake.Message, after: disnake.Message) -> None:
     if after.author.bot:
         return None
-    logger.info(
+    logger.debug(
         f"{before.guild} ({before.guild.id}) "
         f"#{before.channel} ({before.channel.id}) "
         f"@{before.author} ({before.author.id}): "

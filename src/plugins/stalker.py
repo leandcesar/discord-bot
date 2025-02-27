@@ -73,9 +73,9 @@ async def fake_command(
 
 @plugin.message_command(name="Undo edit")
 async def undo_edit_command(inter: disnake.MessageCommandInteraction, message: disnake.Message) -> None:
-    if not message.edited_at:
-        raise Exception()  # TODO
     await inter.response.defer(ephemeral=True)
+    if not message.edited_at:
+        await inter.edit_original_response("💨")
     for m in plugin.bot.edited_messages[::-1]:
         if m.id == message.id:
             member = await inter.guild.fetch_member(m.author.id)

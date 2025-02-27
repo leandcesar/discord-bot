@@ -22,7 +22,7 @@ URL_REWRITE_RULES: list[UrlRewriteRule] = [
 
 
 @plugin.listener("on_message")
-async def better_preview(message: disnake.Message) -> None:
+async def on_message(message: disnake.Message) -> None:
     if message.author.bot:
         return None
     content = message.content
@@ -39,7 +39,7 @@ async def better_preview(message: disnake.Message) -> None:
         files=files,
     )
     await message.edit(suppress_embeds=True)
-    logger.info(
+    logger.debug(
         f"{message.guild} ({message.guild.id}) "
         f"#{message.channel} ({message.channel.id}) "
         f"@{message.author} ({message.author.id}): "

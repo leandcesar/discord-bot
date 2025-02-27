@@ -24,31 +24,30 @@ async def on_message(message: disnake.Message) -> None:
             datetime_isoformat = plugin.bot.afk_data[str(mention.id)]
             datetime = dt.datetime.fromisoformat(datetime_isoformat)
             content = f"{mention.mention} {AFK_TURN_ON} (<t:{int(datetime.timestamp())}:R>)"
-            logger.info(
+            logger.debug(
                 f"{message.guild} ({message.guild.id}) "
                 f"#{message.channel} ({message.channel.id}) "
                 f"@{message.author} ({message.author.id}): "
                 f"{message.content!r} ({message.id}) "
                 f"-> {content!r}"
             )
-            await message.reply(content, mention_author=False, delete_after=5)
-    if message.content and message.content.startswith(
-        "%afk"
-    ):  # TODO: make dynamic in case the prefix or command name changes
+            await message.reply(content, delete_after=10)
+    # TODO: make condition dynamic in case the prefix or command name changes
+    if message.content and message.content.startswith("+afk"):
         return None
     if str(message.author.id) in plugin.bot.afk_data:
         datetime_isoformat = plugin.bot.afk_data.pop(str(message.author.id))
         plugin.bot.persist_afk_data()
         datetime = dt.datetime.fromisoformat(datetime_isoformat)
         content = f"{AFK_TURN_OFF} (<t:{int(datetime.timestamp())}:R>)"
-        logger.info(
+        logger.debug(
             f"{message.guild} ({message.guild.id}) "
             f"#{message.channel} ({message.channel.id}) "
             f"@{message.author} ({message.author.id}): "
             f"{message.content!r} ({message.id}) "
             f"-> {content!r}"
         )
-        await message.reply(content, mention_author=False)
+        await message.reply(content)
 
 
 async def afk_command(

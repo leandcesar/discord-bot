@@ -38,7 +38,7 @@ async def on_message(message: disnake.Message) -> None:
         f"#{message.channel} ({message.channel.id}) "
         f"@{message.author} ({message.author.id}): "
         f"{message.content!r} ({message.id}) "
-        f"-> {result!r}"
+        f"= {result!r}"
     )
     await message.reply(result, mention_author=False)
 

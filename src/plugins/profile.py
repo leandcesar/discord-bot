@@ -129,6 +129,7 @@ async def color_autocomplete(inter: disnake.GuildCommandInteraction, value: str)
 
 async def avatar_command(
     inter: commands.Context[commands.Bot] | disnake.GuildCommandInteraction,
+    *,
     member: disnake.Member,
 ) -> None:
     files = []
@@ -146,6 +147,7 @@ async def avatar_command(
 @plugin.command(name="avatar")
 async def avatar_prefix_command(
     ctx: commands.Context[commands.Bot],
+    *,
     member: disnake.Member | None = None,
 ) -> None:
     if member is None:
