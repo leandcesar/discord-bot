@@ -7,5 +7,6 @@ services:
       - .env
     volumes:
       - .:/app:cached
+      - ./data:/app/data
     working_dir: /app
     command: python -m src

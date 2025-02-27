@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import datetime as dt
+import json
 import os
 
 import disnake
@@ -37,6 +38,7 @@ class Bot(commands.Bot):
         self.start_time: dt.datetime = dt.datetime.now(tz=dt.timezone.utc)
         self.localization = Localization(self.i18n)
         self.http_client: APIHTTPClient = APIHTTPClient()
+        self.afk_data: dict[str, str] = {}
         self._deleted_message_history: list[disnake.Message] = []
         self._edited_message_history: list[disnake.Message] = []
 
@@ -50,12 +52,34 @@ class Bot(commands.Bot):
         self._edited_message_history = self._edited_message_history[-100:]
         return self._edited_message_history
 
+    @property
+    def afk_path_file(self) -> str:
+        path_file = os.path.join(constants.Client.private_data_path, "afk.json")
+        folder = os.path.dirname(path_file)
+        if not os.path.exists(folder):
+            os.makedirs(folder)
+        if not os.path.exists(path_file):
+            with open(path_file, mode="w") as f:
+                f.write(json.dumps({}, indent=4))
+        return path_file
+
+    def load_afk_data(self):
+        # NOTE: use `aiofiles` if experiencing issues with async write/read operations
+        with open(self.afk_path_file) as f:
+            self.afk_data = json.loads(f.read())
+
+    def persist_afk_data(self) -> None:
+        # NOTE: use `aiofiles` if experiencing issues with async write/read operations
+        with open(self.afk_path_file, mode="w") as f:
+            f.write(json.dumps(self.afk_data, indent=4))
+
     async def on_connect(self) -> None:
         pass
 
     async def on_ready(self) -> None:
         msg = constants.generate_startup_table(bot_name=self.user.name, bot_id=self.user.id)
         logger.info(msg)
+        self.load_afk_data()
         self.loop_activities.start()
 
     @tasks.loop(minutes=5)

@@ -35,7 +35,7 @@ __all__ = (
 
 class Client:
     prefix = os.getenv("BOT_PREFIX", "%")
-    owner_ids: tuple[int, ...] = ()  # User: { username }
+    owner_ids: tuple[int, ...] = ()  # User: { id }
     test_guilds: tuple[int, ...] = tuple(json.loads(os.getenv("TEST_GUILDS", "[]")))  # Guild: { id }
 
     activities = ["fundo do poço"]
@@ -44,6 +44,9 @@ class Client:
     activity_status = disnake.Status.online
 
     token: str | None = os.getenv("TOKEN")
+
+    # WARNING: if changed, add to .gitignore and update in docker-compose.yml
+    private_data_path = "data/"
 
     reload = True
 
