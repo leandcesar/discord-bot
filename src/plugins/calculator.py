@@ -6,7 +6,7 @@ from disnake_plugins import Plugin
 from src import log
 from src.bot import Bot
 
-PATTERN = r"^\s*\d+(\s*[\+\-\*/\^]\s*\(*\d+\)*\s*)*\s*$"
+PATTERN = r"^\(*\d+\.?\d*[0-9+\-*/.()^\s]+\d+\.?\d*\)*$"
 REGEX = re.compile(PATTERN)
 
 logger = log.get_logger(__name__)
@@ -33,7 +33,7 @@ async def on_message(message: disnake.Message) -> None:
         return None
     if message.content == str(result):
         return None
-    logger.info(
+    logger.debug(
         f"{message.guild} ({message.guild.id}) "
         f"#{message.channel} ({message.channel.id}) "
         f"@{message.author} ({message.author.id}): "

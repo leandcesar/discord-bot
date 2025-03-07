@@ -51,6 +51,10 @@ class APIHTTPClient:
         if not self._session or self._session.closed:
             self._session = aiohttp.ClientSession(connector=self.connector, loop=self.loop)
 
+    def close(self) -> None:
+        if self._session:
+            self._session.close()
+
     async def request(
         self,
         route: Route,

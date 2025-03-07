@@ -16,8 +16,7 @@ class BaseBotError(Exception):
 
 class HTTPBotError(Exception):
     def __init__(self, method: str, url: str, status: int) -> None:
-        msg = f"{method} request to {url} failed - {status}"
-        logger.error(msg)
+        logger.error(f"{method} request to {url} failed - {status}")
 
         super().__init__(f"Request to {url} failed - {status}")
         self.status = status

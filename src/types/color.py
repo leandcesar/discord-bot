@@ -97,9 +97,6 @@ class HEX(str):
 
 
 class Color:
-    _rgb: RGB
-    _hex: HEX
-
     def __init__(
         self,
         r: int | None = None,
@@ -109,6 +106,8 @@ class Color:
         *,
         hex_value: str | None = None,
     ) -> None:
+        self._rgb: RGB = None  # type: ignore
+        self._hex: HEX = None  # type: ignore
         if hex_value:
             self.hex = HEX(hex_value)
         elif r is not None and g is not None and b is not None:

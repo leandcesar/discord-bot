@@ -76,37 +76,4 @@ async def on_slash_command_error(inter: disnake.GuildCommandInteraction, e: Exce
     )
 
 
-@plugin.listener("on_message_edit")
-async def on_message_edit(before: disnake.Message, after: disnake.Message) -> None:
-    if after.author.bot:
-        return None
-    logger.debug(
-        f"{before.guild} ({before.guild.id}) "
-        f"#{before.channel} ({before.channel.id}) "
-        f"@{before.author} ({before.author.id}): "
-        f"{before.content!r} ({before.id}) "
-        f"-> {after.content!r}"
-    )
-    plugin.bot.edited_messages.append(before)
-
-
-@plugin.listener("on_message_delete")
-async def on_message_delete(message: disnake.Message) -> None:
-    if message.author.bot:
-        return None
-    logger.info(
-        f"{message.guild} ({message.guild.id}) "
-        f"#{message.channel} ({message.channel.id}) "
-        f"@{message.author} ({message.author.id}): "
-        f"{message.content!r} ({message.id}) "
-    )
-    plugin.bot.deleted_messages.append(message)
-
-
-@plugin.listener("on_bulk_message_delete")
-async def on_bulk_message_delete(messages: list[disnake.Message]) -> None:
-    for message in messages:
-        await on_message_delete(message)
-
-
 setup, teardown = plugin.create_extension_handlers()

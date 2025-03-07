@@ -1,10 +1,12 @@
 import datetime as dt
+import json
+import os
 
 import disnake
 from disnake.ext import commands
 from disnake_plugins import Plugin
 
-from src import log
+from src import constants, log
 from src.bot import Bot
 
 logger = log.get_logger(__name__)
@@ -13,6 +15,25 @@ plugin = Plugin[Bot]()
 
 AFK_TURN_ON = "🔕"
 AFK_TURN_OFF = "🔔"
+AFK_PATH_FILE = os.path.join(constants.Client.private_data_path, "afk.json")
+
+
+@plugin.load_hook()
+async def load_afk_data():
+    folder = os.path.dirname(AFK_PATH_FILE)
+    if not os.path.exists(folder):
+        os.makedirs(folder)
+    if not os.path.exists(AFK_PATH_FILE):
+        with open(AFK_PATH_FILE, mode="w") as f:
+            f.write(json.dumps({}, indent=4))
+    with open(AFK_PATH_FILE) as f:
+        plugin.bot.afk_data = json.loads(f.read())
+
+
+@plugin.unload_hook()
+async def persist_afk_data():
+    with open(AFK_PATH_FILE, mode="w") as f:
+        f.write(json.dumps(plugin.bot.afk_data, indent=4))
 
 
 @plugin.listener("on_message")
@@ -37,7 +58,7 @@ async def on_message(message: disnake.Message) -> None:
         return None
     if str(message.author.id) in plugin.bot.afk_data:
         datetime_isoformat = plugin.bot.afk_data.pop(str(message.author.id))
-        plugin.bot.persist_afk_data()
+        await persist_afk_data()
         datetime = dt.datetime.fromisoformat(datetime_isoformat)
         content = f"{AFK_TURN_OFF} (<t:{int(datetime.timestamp())}:R>)"
         logger.debug(
@@ -55,7 +76,7 @@ async def afk_command(
 ) -> None:
     datetime = dt.datetime.utcnow()
     plugin.bot.afk_data[str(inter.author.id)] = datetime.isoformat()
-    plugin.bot.persist_afk_data()
+    await persist_afk_data()
     content = f"{AFK_TURN_ON} (<t:{int(datetime.timestamp())}:R>)"
 
     if isinstance(inter, disnake.Interaction):
@@ -72,7 +93,7 @@ async def afk_prefix_command(ctx: commands.Context[commands.Bot]) -> None:
 @plugin.slash_command(name="afk")
 async def afk_slash_command(inter: disnake.GuildCommandInteraction) -> None:
     """
-    Let others know you're AFK (Away From Keyboard). The bot will notify when you return.
+    Let others know you're AFK (Away From Keyboard).
     """
     await inter.response.defer()
     await afk_command(inter)
