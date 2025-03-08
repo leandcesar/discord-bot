@@ -76,4 +76,4 @@ class APIHTTPClient:
             logger.debug(f"{method} {url} received {data}")
             if response.status == SUCCESS_STATUS:
                 return data
-            raise errors.HTTPBotError(method, url, response.status)
+            raise errors.HTTPError(method, url, response.status)

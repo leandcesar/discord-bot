@@ -3,6 +3,8 @@ from __future__ import annotations
 import logging
 import logging.handlers
 
+from src import constants
+
 __all__ = (
     "get_logger",
     "logger",
@@ -30,7 +32,7 @@ class LoggingFormatter(logging.Formatter):
         log_color = self.colors[record.levelno]
         if len(record.levelname) > 5:
             record.levelname = record.levelname[:4]
-        fmt = "(black){asctime}(reset) (levelcolor){levelname}(reset) (green){name}.{funcName}()(reset) {message}"
+        fmt = "(black){asctime}(reset) (levelcolor){levelname}(reset) (green){name} {funcName}()(reset) {message}"
         fmt = fmt.replace("(black)", self.black + self.bold)
         fmt = fmt.replace("(reset)", self.reset)
         fmt = fmt.replace("(levelcolor)", log_color)
@@ -42,10 +44,10 @@ class LoggingFormatter(logging.Formatter):
 formatter = LoggingFormatter()
 
 logger = logging.getLogger()
-logger.setLevel(logging.INFO)
+logger.setLevel(constants.Log.level)
 
 stdout_handler = logging.StreamHandler()
-stdout_handler.setLevel(logging.INFO)
+stdout_handler.setLevel(constants.Log.level)
 stdout_handler.setFormatter(formatter)
 logger.addHandler(stdout_handler)
 

@@ -5,16 +5,16 @@ from src import log
 logger = log.get_logger(__name__)
 
 __all__ = (
-    "BaseBotError",
-    "HTTPBotError",
+    "BotError",
+    "HTTPError",
 )
 
 
-class BaseBotError(Exception):
+class BotError(Exception):
     pass
 
 
-class HTTPBotError(Exception):
+class HTTPError(Exception):
     def __init__(self, method: str, url: str, status: int) -> None:
         logger.error(f"{method} request to {url} failed - {status}")
 
