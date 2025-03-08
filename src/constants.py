@@ -66,6 +66,9 @@ class Log:
 class AFK:
     path = "data/"  # WARNING: if changed, add to .gitignore and update in docker-compose.yml
     filename = "afk.json"
+    path_filename = os.path.join(path, filename)
+    turn_on = "🔕"
+    turn_off = "🔔"
 
 
 def generate_startup_table(bot_name: str, bot_id: int) -> str:

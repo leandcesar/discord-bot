@@ -30,9 +30,12 @@ class LoggingFormatter(logging.Formatter):
 
     def format(self, record: logging.LogRecord, /) -> str:
         log_color = self.colors[record.levelno]
-        if len(record.levelname) > 5:
-            record.levelname = record.levelname[:4]
-        fmt = "(black){asctime}(reset) (levelcolor){levelname}(reset) (green){name} {funcName}()(reset) {message}"
+        fmt = (
+            "(black){asctime}(reset)"
+            " (levelcolor){levelname}(reset)"
+            " (green){name}.{funcName}()(reset)"
+            " {context}{message}"
+        )
         fmt = fmt.replace("(black)", self.black + self.bold)
         fmt = fmt.replace("(reset)", self.reset)
         fmt = fmt.replace("(levelcolor)", log_color)
@@ -41,14 +44,29 @@ class LoggingFormatter(logging.Formatter):
         return formatter.format(record)
 
 
+class ContextFilter(logging.Filter):
+    def filter(self, record: logging.LogRecord) -> bool:
+        if hasattr(record, "context") and record.context:
+            guild = f"{record.context.guild} ({record.context.guild.id})"
+            channel = f"{record.context.channel} ({record.context.channel.id})"
+            author = f"{record.context.author} ({record.context.author.id})"
+            record.context = f"{guild} #{channel} @{author} "
+        else:
+            record.context = ""
+        return True
+
+
 formatter = LoggingFormatter()
+author_filter = ContextFilter()
 
 logger = logging.getLogger()
 logger.setLevel(constants.Log.level)
+logger.addFilter(author_filter)
 
 stdout_handler = logging.StreamHandler()
 stdout_handler.setLevel(constants.Log.level)
 stdout_handler.setFormatter(formatter)
+stdout_handler.addFilter(author_filter)
 logger.addHandler(stdout_handler)
 
 logging.getLogger("disnake").setLevel(logging.WARNING)

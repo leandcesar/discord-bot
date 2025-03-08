@@ -40,11 +40,8 @@ async def on_message(message: disnake.Message) -> None:
     )
     await message.edit(suppress_embeds=True)
     logger.debug(
-        f"{message.guild} ({message.guild.id}) "
-        f"#{message.channel} ({message.channel.id}) "
-        f"@{message.author} ({message.author.id}): "
-        f"{message.content!r} ({message.id}) "
-        f"-> {content!r}"
+        f"{message.content!r} ({message.id}) -> {content!r}",
+        extra={"context": message},
     )
 
 

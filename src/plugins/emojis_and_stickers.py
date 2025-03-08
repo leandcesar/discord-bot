@@ -60,7 +60,7 @@ async def emoji_remove_command(inter: disnake.GuildCommandInteraction, emoji_nam
     await inter.response.defer()
     guild_emoji = [emoji for emoji in inter.guild.emojis if emoji_name.casefold() == emoji.name.casefold()][0]
     file = await guild_emoji.to_file()
-    view = buttons.Delete()
+    view = buttons.DeleteView()
     message = await inter.edit_original_response(file=file, view=view)
     await view.wait()
     if view.value:
@@ -150,7 +150,7 @@ async def sticker_remove_command(inter: disnake.GuildCommandInteraction, sticker
         sticker for sticker in inter.guild.stickers if sticker_name.casefold() == sticker.name.casefold()
     ][0]
     file = await guild_sticker.to_file()
-    view = buttons.Delete()
+    view = buttons.DeleteView()
     message = await inter.edit_original_response(file=file, view=view)
     await view.wait()
     if view.value:
