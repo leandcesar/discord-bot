@@ -13,8 +13,8 @@ plugin = Plugin[Bot]()
 
 @plugin.load_hook()
 async def create_messages_cache() -> None:
-    plugin.bot.deleted_messages: list[disnake.Message] = []  # type: ignore
-    plugin.bot.edited_messages: list[disnake.Message] = []  # type: ignore
+    plugin.bot.deleted_messages = []
+    plugin.bot.edited_messages = []
 
 
 @plugin.listener("on_message_edit")
@@ -22,11 +22,8 @@ async def on_message_edit(before: disnake.Message, after: disnake.Message) -> No
     if before.author.bot:
         return None
     logger.debug(
-        f"{before.guild} ({before.guild.id}) "
-        f"#{before.channel} ({before.channel.id}) "
-        f"@{before.author} ({before.author.id}): "
-        f"{before.content!r} ({before.id}) "
-        f"-> {after.content!r}"
+        f"{before.content!r} ({before.id}) -> {after.content!r}",
+        extra={"context": before},
     )
     plugin.bot.edited_messages.append(before)
 
@@ -36,10 +33,8 @@ async def on_message_delete(message: disnake.Message) -> None:
     if message.author.bot:
         return None
     logger.info(
-        f"{message.guild} ({message.guild.id}) "
-        f"#{message.channel} ({message.channel.id}) "
-        f"@{message.author} ({message.author.id}): "
-        f"{message.content!r} ({message.id}) "
+        f"{message.content!r} ({message.id}) ",
+        extra={"context": message},
     )
     plugin.bot.deleted_messages.append(message)
 

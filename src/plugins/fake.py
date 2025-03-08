@@ -28,11 +28,15 @@ async def fake_command(
     """
     await inter.response.defer(ephemeral=True)
     webhook = await application_webhook(plugin.bot, inter.channel)
-    options = {"username": member.display_name, "avatar_url": member.display_avatar.url, "wait": True}
-    if attachment:
-        options["file"] = await attachment.to_file()
-    message = await webhook.send(content, **options)
-    await inter.edit_original_response(message.jump_url)
+    files = [await attachment.to_file()] if attachment else []
+    webhook_message = await webhook.send(
+        content,
+        username=member.display_name,
+        avatar_url=member.display_avatar.url,
+        files=files,
+        wait=True,
+    )
+    await inter.edit_original_response(webhook_message.jump_url)
 
 
 setup, teardown = plugin.create_extension_handlers()

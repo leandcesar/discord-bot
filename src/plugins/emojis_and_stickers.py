@@ -19,7 +19,7 @@ plugin = Plugin[Bot]()
 @plugin.slash_command(name="emoji")
 async def emoji_command(inter: disnake.GuildCommandInteraction) -> None:
     """
-    Command for managing server emojis.
+    Command for managing server custom emojis.
 
     Permissions
     ------------
@@ -34,33 +34,33 @@ async def emoji_add_command(
     attachment: disnake.Attachment,
 ) -> None:
     """
-    Add a new emoji to the server.
+    Add a custom emoji to the server.
 
     Parameters
     ----------
-    name: The name to assign to the new emoji.
-    attachment: The image file that will be used as the emoji.
+    name: The name to assign to the new custom emoji.
+    attachment: The image file that will be used as the custom emoji.
     """
     await inter.response.defer()
     emoji = await attachment.read()
     guild_emoji = await inter.guild.create_custom_emoji(name=name, image=emoji)
     file = await guild_emoji.to_file()
-    await inter.edit_original_response(file=file)
+    await inter.edit_original_response(f"`{name}`", file=file)
 
 
 @emoji_command.sub_command(name="remove")
-async def emoji_remove_command(inter: disnake.GuildCommandInteraction, emoji_name: str) -> None:
+async def emoji_remove_command(inter: disnake.GuildCommandInteraction, name: str) -> None:
     """
-    Remove an emoji from the server.
+    Remove a custom emoji from the server.
 
     Parameters
     ----------
-    emoji: The emoji (or emote) to be removed from the server.
+    name: The name of the custom emoji you want to remove.
     """
     await inter.response.defer()
-    guild_emoji = [emoji for emoji in inter.guild.emojis if emoji_name.casefold() == emoji.name.casefold()][0]
+    guild_emoji = [emoji for emoji in inter.guild.emojis if name.casefold() == emoji.name.casefold()][0]
     file = await guild_emoji.to_file()
-    view = buttons.Delete()
+    view = buttons.DeleteView()
     message = await inter.edit_original_response(file=file, view=view)
     await view.wait()
     if view.value:
@@ -72,29 +72,29 @@ async def emoji_remove_command(inter: disnake.GuildCommandInteraction, emoji_nam
     await message.edit(view=None)
 
 
-@emoji_remove_command.autocomplete("emoji_name")
+@emoji_remove_command.autocomplete("name")
 async def emoji_remove_autocomplete(self, inter: disnake.GuildCommandInteraction, name: str) -> list[str]:
     return [emoji.name for emoji in inter.guild.emojis if name.casefold() in emoji.name.casefold()][:25]
 
 
 @emoji_command.sub_command(name="rename")
-async def emoji_rename_command(inter: disnake.GuildCommandInteraction, emoji_name: str, name: str) -> None:
+async def emoji_rename_command(inter: disnake.GuildCommandInteraction, name: str, new_name: str) -> None:
     """
-    Rename an emoji from the server.
+    Rename a custom emoji in the server.
 
     Parameters
     ----------
-    emoji: The emoji (or emote) to be renamed from the server.
-    name: The new emoji (or emote) name.
+    name: The name of the custom emoji you want to rename.
+    new_name: The new name you want to assign to the custom emoji.
     """
     await inter.response.defer()
-    guild_emoji = [emoji for emoji in inter.guild.emojis if emoji_name.casefold() == emoji.name.casefold()][0]
-    await guild_emoji.edit(name=name)
+    guild_emoji = [emoji for emoji in inter.guild.emojis if name.casefold() == emoji.name.casefold()][0]
+    await guild_emoji.edit(name=new_name)
     file = await guild_emoji.to_file()
-    await inter.edit_original_response(file=file)
+    await inter.edit_original_response(f"`{name}` -> `{new_name}`", file=file)
 
 
-@emoji_rename_command.autocomplete("emoji_name")
+@emoji_rename_command.autocomplete("name")
 async def emoji_rename_autocomplete(self, inter: disnake.GuildCommandInteraction, name: str) -> list[str]:
     return [emoji.name for emoji in inter.guild.emojis if name.casefold() in emoji.name.casefold()][:25]
 
@@ -119,7 +119,7 @@ async def sticker_add_command(
     attachment: disnake.Attachment,
 ) -> None:
     """
-    Add a new sticker to the server.
+    Add a sticker to the server.
 
     Parameters
     ----------
@@ -133,24 +133,22 @@ async def sticker_add_command(
         file = disnake.File(sticker_bytes, filename=f"{name}.png")
         guild_sticker = await inter.guild.create_sticker(name=name, emoji=emoji, file=file)
         file = await guild_sticker.to_file()
-        await inter.edit_original_response(file=file)
+        await inter.edit_original_response(f"`{name}`", file=file)
 
 
 @sticker_command.sub_command(name="remove")
-async def sticker_remove_command(inter: disnake.GuildCommandInteraction, sticker_name: str) -> None:
+async def sticker_remove_command(inter: disnake.GuildCommandInteraction, name: str) -> None:
     """
     Remove a sticker from the server.
 
     Parameters
     ----------
-    sticker: The sticker to be removed from the server.
+    name: The name of the sticker you want to remove.
     """
     await inter.response.defer()
-    guild_sticker = [
-        sticker for sticker in inter.guild.stickers if sticker_name.casefold() == sticker.name.casefold()
-    ][0]
+    guild_sticker = [sticker for sticker in inter.guild.stickers if name.casefold() == sticker.name.casefold()][0]
     file = await guild_sticker.to_file()
-    view = buttons.Delete()
+    view = buttons.DeleteView()
     message = await inter.edit_original_response(file=file, view=view)
     await view.wait()
     if view.value:
@@ -162,31 +160,29 @@ async def sticker_remove_command(inter: disnake.GuildCommandInteraction, sticker
     await message.edit(view=None)
 
 
-@sticker_remove_command.autocomplete("sticker_name")
+@sticker_remove_command.autocomplete("name")
 async def sticker_remove_autocomplete(self, inter: disnake.GuildCommandInteraction, name: str) -> list[str]:
     return [sticker.name for sticker in inter.guild.stickers if name.casefold() in sticker.name.casefold()][:25]
 
 
 @sticker_command.sub_command(name="rename")
-async def sticker_rename_command(inter: disnake.GuildCommandInteraction, sticker_name: str, name: str) -> None:
+async def sticker_rename_command(inter: disnake.GuildCommandInteraction, name: str, new_name: str) -> None:
     """
-    Rename a sticker from the server.
+    Rename a sticker in the server.
 
     Parameters
     ----------
-    sticker: The sticker to be renamed from the server.
-    name: The new sticker name.
+    name: The name of the sticker you want to rename.
+    new_name: The new name you want to assign to the sticker.
     """
     await inter.response.defer()
-    guild_sticker = [
-        sticker for sticker in inter.guild.stickers if sticker_name.casefold() == sticker.name.casefold()
-    ][0]
-    await guild_sticker.edit(name=name)
+    guild_sticker = [sticker for sticker in inter.guild.stickers if name.casefold() == sticker.name.casefold()][0]
+    await guild_sticker.edit(name=new_name)
     file = await guild_sticker.to_file()
-    await inter.edit_original_response(file=file)
+    await inter.edit_original_response(f"`{name}` -> `{new_name}`", file=file)
 
 
-@sticker_rename_command.autocomplete("sticker_name")
+@sticker_rename_command.autocomplete("name")
 async def sticker_rename_autocomplete(self, inter: disnake.GuildCommandInteraction, name: str) -> list[str]:
     return [sticker.name for sticker in inter.guild.stickers if name.casefold() in sticker.name.casefold()][:25]
 
@@ -199,7 +195,7 @@ async def data_from_url(url: str, /) -> bytes:
             return data
 
 
-async def datas_from_message_attachments(message: disnake.Message, /) -> list[bytes]:
+async def datas_attachments_from_message(message: disnake.Message, /) -> list[bytes]:
     datas = []
     for attachment in message.attachments:
         data = await attachment.read()
@@ -207,7 +203,7 @@ async def datas_from_message_attachments(message: disnake.Message, /) -> list[by
     return datas
 
 
-async def datas_from_message_embeds(message: disnake.Message, /) -> list[bytes]:
+async def datas_embeds_from_message(message: disnake.Message, /) -> list[bytes]:
     datas = []
     for embed in message.embeds:
         media = embed.video or embed.thumbnail or embed.image
@@ -217,7 +213,7 @@ async def datas_from_message_embeds(message: disnake.Message, /) -> list[bytes]:
     return datas
 
 
-async def datas_from_message_emojis(message: disnake.Message, /) -> list[bytes]:
+async def datas_emojis_from_message(message: disnake.Message, /) -> list[bytes]:
     datas = []
     for emoji_name, emoji_id in re.findall(r"<a?:(\w+):(\d{16,19})>", message.content):
         emoji = plugin.bot.get_emoji(int(emoji_id))
@@ -226,7 +222,7 @@ async def datas_from_message_emojis(message: disnake.Message, /) -> list[bytes]:
     return datas
 
 
-async def datas_from_message_stickers(message: disnake.Message, /) -> list[bytes]:
+async def datas_stickers_from_message(message: disnake.Message, /) -> list[bytes]:
     datas = []
     for sticker in message.stickers:
         data = await sticker.read()
@@ -236,10 +232,10 @@ async def datas_from_message_stickers(message: disnake.Message, /) -> list[bytes
 
 async def datas_from_message(message: disnake.Message, /) -> list[bytes]:
     datas = []
-    datas.extend(await datas_from_message_attachments(message))
-    datas.extend(await datas_from_message_embeds(message))
-    datas.extend(await datas_from_message_emojis(message))
-    datas.extend(await datas_from_message_stickers(message))
+    datas.extend(await datas_attachments_from_message(message))
+    datas.extend(await datas_embeds_from_message(message))
+    datas.extend(await datas_emojis_from_message(message))
+    datas.extend(await datas_emojis_from_message(message))
     return datas
 
 
