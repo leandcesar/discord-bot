@@ -6,7 +6,7 @@
   </p>
 </div>
 
----
+______________________________________________________________________
 
 # Getting Started
 
@@ -19,10 +19,13 @@
 ## Installing
 
 1. Clone the repository using [Git](https://git-scm.com/).
+
 ```sh
 git clone git@github.com:leandcesar/discord-bot.git
 ```
+
 2. Go to directory.
+
 ```sh
 cd discord-bot
 ```
@@ -30,11 +33,14 @@ cd discord-bot
 ## Running
 
 3. Ensure to fill in the necessary environment variables in the `.env` file.
-4. Build the Docker service for the application.
+1. Build the Docker service for the application.
+
 ```sh
 make build
 ```
+
 5. Check if everything was installed correctly.
+
 ```sh
 make up
 ```
@@ -42,6 +48,7 @@ make up
 ## Cleaning up
 
 6. Uninstall all Docker components.
+
 ```sh
 make down
 ```
@@ -56,26 +63,35 @@ make down
 ## Development
 
 1. Create a [venv](https://docs.python.org/3/library/venv.html) and install dependencies with [pip](https://pip.pypa.io/en/stable/).
+
 ```sh
 make install
 ```
+
 2. Create a new branch with a descriptive name.
+
 ```sh
 git checkout -b awesome-branch-name
 ```
+
 3. Implement and add your code changes on this new branch.
 
 ## Code Style
 
 4. Perform static code analysis with [ruff](https://beta.ruff.rs/docs/) and [mypy](https://mypy-lang.org/).
+
 ```sh
 make lint
 ```
+
 5. Validate code security issues with [bandit](https://bandit.readthedocs.io/en/latest/).
+
 ```sh
 make security
 ```
+
 6. Format the code according to defined standards with [black](https://black.readthedocs.io/en/stable/) and organize imports with [isort](https://pycqa.github.io/isort/).
+
 ```sh
 make format
 ```
@@ -83,23 +99,30 @@ make format
 ## Contribute
 
 7. Commit your changes to your local branch using [Conventional Commit](https://www.conventionalcommits.org/en/) messages.
+
 ```sh
 git add .
 git commit -m 'feat(scope): example message'
 ```
+
 8. Push your changes to the remote [GitHub](https://github.com/) repository.
+
 ```sh
 git push origin awesome-branch-name
 ```
+
 9. Create a Pull Request to the `main` branch.
 
 ## Cleaning up
 
 10. Remove temporary files.
+
 ```sh
 make clean
 ```
+
 11. Uninstall all dependencies.
+
 ```sh
 make uninstall
 ```
