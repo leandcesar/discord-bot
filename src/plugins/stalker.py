@@ -12,9 +12,9 @@ plugin = Plugin[Bot]()
 
 
 @plugin.load_hook()
-async def load_afk_data():
-    plugin.bot.deleted_messages: list[disnake.Message] = []
-    plugin.bot.edited_messages: list[disnake.Message] = []
+async def create_messages_cache() -> None:
+    plugin.bot.deleted_messages: list[disnake.Message] = []  # type: ignore
+    plugin.bot.edited_messages: list[disnake.Message] = []  # type: ignore
 
 
 @plugin.listener("on_message_edit")
@@ -85,33 +85,8 @@ async def snipe_slash_command(inter: disnake.GuildCommandInteraction) -> None:
     await snipe_command(inter)
 
 
-@plugin.slash_command(name="fake")
-async def fake_command(
-    inter: disnake.GuildCommandInteraction,
-    member: disnake.Member,
-    content: str,
-    attachment: disnake.Attachment | None = None,
-) -> None:
-    """
-    Send a message impersonating another user in the current channel.
-
-    Parameters
-    ----------
-    member: The guild member whose identity will be faked.
-    content: The text content to be sent as if it were from the specified user.
-    attachment: An optional media attachment to include with the message.
-    """
-    await inter.response.defer(ephemeral=True)
-    webhook = await application_webhook(plugin.bot, inter.channel)
-    options = {"username": member.display_name, "avatar_url": member.display_avatar.url, "wait": True}
-    if attachment:
-        options["file"] = await attachment.to_file()
-    message = await webhook.send(content, **options)
-    await inter.edit_original_response(message.jump_url)
-
-
 @plugin.message_command(name="Undo edit")
-async def undo_edit_command(inter: disnake.MessageCommandInteraction, message: disnake.Message) -> None:
+async def undo_command(inter: disnake.MessageCommandInteraction, message: disnake.Message) -> None:
     await inter.response.defer(ephemeral=True)
     for m in plugin.bot.edited_messages[::-1]:
         if m.id == message.id:

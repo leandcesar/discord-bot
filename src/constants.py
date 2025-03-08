@@ -11,12 +11,9 @@ import disnake
 from disnake import __version__ as disnake_version
 
 from src import __version__ as bot_version
-from src import log
 
 if t.TYPE_CHECKING:
     from disnake import Permissions
-
-logger = log.get_logger(__name__)
 
 try:
     import dotenv
@@ -24,7 +21,6 @@ except ModuleNotFoundError:
     pass
 else:
     if dotenv.find_dotenv():
-        logger.info("Found .env file, loading environment variables")
         dotenv.load_dotenv(override=True)
 
 __all__ = (
@@ -37,16 +33,7 @@ class Client:
     prefix = os.getenv("BOT_PREFIX", "%")
     owner_ids: tuple[int, ...] = ()  # User: { id }
     test_guilds: tuple[int, ...] = tuple(json.loads(os.getenv("TEST_GUILDS", "[]")))  # Guild: { id }
-
-    activities = ["fundo do poço"]
-    activities_cycle = cycle(activities)
-    activity_type = disnake.ActivityType.watching
-    activity_status = disnake.Status.online
-
     token: str | None = os.getenv("TOKEN")
-
-    # WARNING: if changed, add to .gitignore and update in docker-compose.yml
-    private_data_path = "data/"
 
     reload = True
 
@@ -66,6 +53,19 @@ class Client:
         connect=True,
         speak=True,
     )
+
+    activities = cycle(["fundo do poço"])
+    activity_type = disnake.ActivityType.watching
+    activity_status = disnake.Status.online
+
+
+class Log:
+    level: str = os.getenv("LOG_LEVEL", "INFO")
+
+
+class AFK:
+    path = "data/"  # WARNING: if changed, add to .gitignore and update in docker-compose.yml
+    filename = "afk.json"
 
 
 def generate_startup_table(bot_name: str, bot_id: int) -> str:

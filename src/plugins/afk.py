@@ -15,11 +15,11 @@ plugin = Plugin[Bot]()
 
 AFK_TURN_ON = "🔕"
 AFK_TURN_OFF = "🔔"
-AFK_PATH_FILE = os.path.join(constants.Client.private_data_path, "afk.json")
+AFK_PATH_FILE = os.path.join(constants.AFK.path, constants.AFK.filename)
 
 
 @plugin.load_hook()
-async def load_afk_data():
+async def load_afk_data() -> None:
     folder = os.path.dirname(AFK_PATH_FILE)
     if not os.path.exists(folder):
         os.makedirs(folder)
@@ -31,7 +31,7 @@ async def load_afk_data():
 
 
 @plugin.unload_hook()
-async def persist_afk_data():
+async def persist_afk_data() -> None:
     with open(AFK_PATH_FILE, mode="w") as f:
         f.write(json.dumps(plugin.bot.afk_data, indent=4))
 
@@ -78,7 +78,6 @@ async def afk_command(
     plugin.bot.afk_data[str(inter.author.id)] = datetime.isoformat()
     await persist_afk_data()
     content = f"{AFK_TURN_ON} (<t:{int(datetime.timestamp())}:R>)"
-
     if isinstance(inter, disnake.Interaction):
         await inter.edit_original_response(content)
     else:
