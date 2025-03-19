@@ -4,7 +4,6 @@ import datetime as dt
 import json
 import os
 import typing as t
-from itertools import cycle
 from sys import version as system_version
 
 import disnake
@@ -54,13 +53,20 @@ class Client:
         speak=True,
     )
 
-    activities = cycle(["fundo do poço"])
-    activity_type = disnake.ActivityType.watching
-    activity_status = disnake.Status.online
+    activity: str | None = None
+    activity_type: disnake.ActivityType | None = None
+    activity_status: disnake.Status | None = None
 
 
 class Log:
     level: str = os.getenv("LOG_LEVEL", "INFO")
+
+
+class Groq:
+    api_key: str | None = os.getenv("GROQ_API_KEY")
+    model = "llama-3.3-70b-versatile"
+    temperature = 0.4
+    max_completion_tokens = 512
 
 
 class AFK:

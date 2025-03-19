@@ -15,34 +15,22 @@ __all__ = (
 
 @contextmanager
 def concatenate_assets(
-    asset1_bytes: bytes,
-    asset2_bytes: bytes,
+    assets_bytes: list[bytes],
     /,
     *,
-    side_by_side: bool = True,
+    columns: str | int,
+    rows: str | int,
 ) -> Generator[io.BytesIO]:
-    asset1 = Image.open(io.BytesIO(asset1_bytes))
-    asset2 = Image.open(io.BytesIO(asset2_bytes))
-    if side_by_side:
-        max_height = max(asset1.height, asset2.height)
-        asset1_resized = asset1.resize((int(asset1.width * max_height / asset1.height), max_height))
-        asset2_resized = asset2.resize((int(asset2.width * max_height / asset2.height), max_height))
-        new_width = asset1_resized.width + asset2_resized.width
-        image = Image.new("RGB", (new_width, max_height))
-        image.paste(asset1_resized, (0, 0))
-        image.paste(asset2_resized, (asset1_resized.width, 0))
-    else:
-        max_width = max(asset1.width, asset2.width)
-        asset1_resized = asset1.resize((max_width, int(asset1.height * max_width / asset1.width)))
-        asset2_resized = asset2.resize((max_width, int(asset2.height * max_width / asset2.width)))
-        new_height = asset1_resized.height + asset2_resized.height
-        image = Image.new("RGB", (max_width, new_height))
-        image.paste(asset1_resized, (0, 0))
-        image.paste(asset2_resized, (0, asset1_resized.height))
-
-    asset1.close()
-    asset2.close()
-
+    images = [Image.open(io.BytesIO(img)) for img in assets_bytes]
+    min_size = min(img.size[0] for img in images)
+    resized_images = [img.resize((min_size, min_size)) for img in images]
+    total_width = int(columns) * min_size
+    total_height = int(rows) * min_size
+    image = Image.new("RGBA", (total_width, total_height))
+    for i, img in enumerate(resized_images):
+        row = i // int(columns)
+        col = i % int(columns)
+        image.paste(img, (col * min_size, row * min_size))
     with io.BytesIO() as image_binary:
         image.save(image_binary, "PNG")
         image_binary.seek(0)
@@ -53,7 +41,6 @@ def concatenate_assets(
 def to_black_and_white(asset_bytes: bytes) -> Generator[io.BytesIO]:
     image = Image.open(io.BytesIO(asset_bytes))
     bw_image = image.convert("L")
-
     with io.BytesIO() as image_binary:
         bw_image.save(image_binary, "PNG")
         image_binary.seek(0)
@@ -70,7 +57,6 @@ def resize_asset(
     image = Image.open(io.BytesIO(asset_bytes))
     if image.size != (width, height):
         image = image.resize((width, height))
-
     with io.BytesIO() as image_binary:
         image.save(image_binary, "PNG")
         image_binary.seek(0)
