@@ -59,18 +59,13 @@ class APIHTTPClient:
         self,
         route: Route,
         headers: dict[str, str] | None = None,
+        json: dict[str, str] | None = None,
+        **kwargs,
     ) -> dict[str, t.Any] | list[dict[str, t.Any]] | str:
         self.ensure_session()
         method = route.method
         url = route.url
-        _headers = {"Accept": "application/json"}
-
-        if headers:
-            headers.update(**_headers)
-        else:
-            headers = _headers
-
-        async with self._session.request(method, url, headers=headers) as response:
+        async with self._session.request(method, url, headers=headers, json=json, **kwargs) as response:
             logger.debug(f"{method} {url} returned {response.status}")
             data = await json_or_text(response)
             logger.debug(f"{method} {url} received {data}")

@@ -15,10 +15,7 @@ def guild_has_banner(inter: disnake.GuildCommandInteraction) -> bool:
 
 
 @plugin.slash_command(name="server")
-async def server_command(inter: disnake.GuildCommandInteraction) -> None:
-    """
-    ...  # TODO: add description
-    """
+async def server_command(inter: disnake.GuildCommandInteraction) -> None: ...
 
 
 async def server_icon_command(inter: commands.Context[commands.Bot] | disnake.GuildCommandInteraction) -> None:
@@ -39,7 +36,7 @@ async def server_icon_slash_command(
     inter: disnake.GuildCommandInteraction,
 ) -> None:
     """
-    ...  # TODO: add description
+    Display the guild's icon in the highest available resolution.
     """
     await inter.response.defer()
     await server_icon_command(inter)
@@ -65,7 +62,7 @@ async def server_banner_slash_command(
     inter: disnake.GuildCommandInteraction,
 ) -> None:
     """
-    ...  # TODO: add description
+    Display the guild's banner in the highest available resolution.
     """
     await inter.response.defer()
     await server_banner_command(inter)

@@ -4,7 +4,7 @@ import datetime as dt
 import os
 
 import disnake
-from disnake.ext import commands, tasks
+from disnake.ext import commands
 
 from src import constants, log
 from src.util.localize import Localization
@@ -41,7 +41,9 @@ class Bot(commands.Bot):
 
     async def on_ready(self) -> None:
         logger.info(constants.generate_startup_table(bot_name=self.user.name, bot_id=self.user.id))
-        self.loop_activities.start()
+        if constants.Client.activity:
+            activity = disnake.Activity(name=constants.Client.activity, type=constants.Client.activity_type)
+            await self.change_presence(activity=activity, status=constants.Client.activity_status)
 
     def load_extensions(self, path: str) -> None:
         for item in os.listdir(path):
@@ -57,17 +59,3 @@ class Bot(commands.Bot):
         return [
             owner for owner_id in constants.Client.owner_ids if (owner := await self.get_or_fetch_user(owner_id))
         ]
-
-    @tasks.loop(minutes=5)
-    async def loop_activities(self) -> None:
-        if constants.Client.activities:
-            activity = disnake.Activity(
-                name=next(iter(constants.Client.activities)),
-                type=constants.Client.activity_type,
-            )
-        else:
-            logger.warning("There are no activities provided.")
-            activity = None
-            self.loop_activities.stop()
-
-        await self.change_presence(activity=activity, status=constants.Client.activity_status)
