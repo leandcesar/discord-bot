@@ -14,10 +14,7 @@ plugin = Plugin[Bot]()
 
 
 @plugin.slash_command(name="member")
-async def member_command(inter: disnake.GuildCommandInteraction) -> None:
-    """
-    ...  # TODO: add description
-    """
+async def member_command(inter: disnake.GuildCommandInteraction) -> None: ...
 
 
 async def avatar_command(
@@ -133,11 +130,11 @@ async def banner_slash_command(
     member: disnake.Member = commands.Param(lambda inter: inter.author),
 ) -> None:
     """
-    Display the specified member's banner(s) in the highest available resolution.
+    Display the specified member's banner in the highest available resolution.
 
     Parameters
     ----------
-    member: The member whose banner(s) will be retrieved and displayed.
+    member: The member whose banner will be retrieved and displayed.
     """
     await inter.response.defer()
     await banner_command(inter, member=member)
