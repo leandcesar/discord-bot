@@ -17,6 +17,5 @@ class BotError(Exception):
 class HTTPError(Exception):
     def __init__(self, method: str, url: str, status: int) -> None:
         logger.error(f"{method} request to {url} failed - {status}")
-
         super().__init__(f"Request to {url} failed - {status}")
         self.status = status

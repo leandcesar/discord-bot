@@ -12,7 +12,7 @@ plugin = Plugin[Bot]()
 
 
 @plugin.load_hook()
-async def create_messages_cache() -> None:
+async def stalker_load_hook() -> None:
     plugin.bot.deleted_messages = []
     plugin.bot.edited_messages = []
 
@@ -45,7 +45,7 @@ async def on_bulk_message_delete(messages: list[disnake.Message]) -> None:
         await on_message_delete(message)
 
 
-async def snipe_command(inter: commands.Context[commands.Bot] | disnake.GuildCommandInteraction) -> None:
+async def _snipe_command(inter: commands.Context[commands.Bot] | disnake.GuildCommandInteraction) -> None:
     for m in plugin.bot.deleted_messages[::-1]:
         if m.channel.id == inter.channel.id:
             member = await inter.guild.fetch_member(m.author.id)
@@ -68,7 +68,7 @@ async def snipe_command(inter: commands.Context[commands.Bot] | disnake.GuildCom
 
 @plugin.command(name="snipe")
 async def snipe_prefix_command(ctx: commands.Context[commands.Bot]) -> None:
-    await snipe_command(ctx)
+    await _snipe_command(ctx)
 
 
 @plugin.slash_command(name="snipe")
@@ -77,11 +77,11 @@ async def snipe_slash_command(inter: disnake.GuildCommandInteraction) -> None:
     Restore the last deleted message in the current channel.
     """
     await inter.response.defer(ephemeral=True)
-    await snipe_command(inter)
+    await _snipe_command(inter)
 
 
 @plugin.message_command(name="Undo edit")
-async def undo_command(inter: disnake.MessageCommandInteraction, message: disnake.Message) -> None:
+async def undo_message_command(inter: disnake.MessageCommandInteraction, message: disnake.Message) -> None:
     await inter.response.defer(ephemeral=True)
     for m in plugin.bot.edited_messages[::-1]:
         if m.id == message.id:

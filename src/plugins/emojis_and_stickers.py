@@ -17,7 +17,7 @@ plugin = Plugin[Bot]()
 
 @commands.has_permissions(manage_emojis_and_stickers=True)
 @plugin.slash_command(name="emoji")
-async def emoji_command(inter: disnake.GuildCommandInteraction) -> None:
+async def emoji_slash_command(inter: disnake.GuildCommandInteraction) -> None:
     """
     Command for managing server custom emojis.
 
@@ -27,8 +27,8 @@ async def emoji_command(inter: disnake.GuildCommandInteraction) -> None:
     """
 
 
-@emoji_command.sub_command(name="add")
-async def emoji_add_command(
+@emoji_slash_command.sub_command(name="add")
+async def emoji_add_slash_command(
     inter: disnake.GuildCommandInteraction,
     name: str,
     attachment: disnake.Attachment,
@@ -48,8 +48,8 @@ async def emoji_add_command(
     await inter.edit_original_response(f"`{name}`", file=file)
 
 
-@emoji_command.sub_command(name="remove")
-async def emoji_remove_command(inter: disnake.GuildCommandInteraction, name: str) -> None:
+@emoji_slash_command.sub_command(name="remove")
+async def emoji_remove_slash_command(inter: disnake.GuildCommandInteraction, name: str) -> None:
     """
     Remove a custom emoji from the server.
 
@@ -72,13 +72,13 @@ async def emoji_remove_command(inter: disnake.GuildCommandInteraction, name: str
     await message.edit(view=None)
 
 
-@emoji_remove_command.autocomplete("name")
+@emoji_remove_slash_command.autocomplete("name")
 async def emoji_remove_autocomplete(self, inter: disnake.GuildCommandInteraction, name: str) -> list[str]:
     return [emoji.name for emoji in inter.guild.emojis if name.casefold() in emoji.name.casefold()][:25]
 
 
-@emoji_command.sub_command(name="rename")
-async def emoji_rename_command(inter: disnake.GuildCommandInteraction, name: str, new_name: str) -> None:
+@emoji_slash_command.sub_command(name="rename")
+async def emoji_rename_slash_command(inter: disnake.GuildCommandInteraction, name: str, new_name: str) -> None:
     """
     Rename a custom emoji in the server.
 
@@ -94,14 +94,14 @@ async def emoji_rename_command(inter: disnake.GuildCommandInteraction, name: str
     await inter.edit_original_response(f"`{name}` -> `{new_name}`", file=file)
 
 
-@emoji_rename_command.autocomplete("name")
+@emoji_rename_slash_command.autocomplete("name")
 async def emoji_rename_autocomplete(self, inter: disnake.GuildCommandInteraction, name: str) -> list[str]:
     return [emoji.name for emoji in inter.guild.emojis if name.casefold() in emoji.name.casefold()][:25]
 
 
 @commands.has_permissions(manage_emojis_and_stickers=True)
 @plugin.slash_command(name="sticker")
-async def sticker_command(inter: disnake.GuildCommandInteraction) -> None:
+async def sticker_slash_command(inter: disnake.GuildCommandInteraction) -> None:
     """
     Command for managing server stickers.
 
@@ -111,8 +111,8 @@ async def sticker_command(inter: disnake.GuildCommandInteraction) -> None:
     """
 
 
-@sticker_command.sub_command(name="add")
-async def sticker_add_command(
+@sticker_slash_command.sub_command(name="add")
+async def sticker_add_slash_command(
     inter: disnake.GuildCommandInteraction,
     name: str,
     emoji: str,
@@ -136,8 +136,8 @@ async def sticker_add_command(
         await inter.edit_original_response(f"`{name}`", file=file)
 
 
-@sticker_command.sub_command(name="remove")
-async def sticker_remove_command(inter: disnake.GuildCommandInteraction, name: str) -> None:
+@sticker_slash_command.sub_command(name="remove")
+async def sticker_remove_slash_command(inter: disnake.GuildCommandInteraction, name: str) -> None:
     """
     Remove a sticker from the server.
 
@@ -160,13 +160,13 @@ async def sticker_remove_command(inter: disnake.GuildCommandInteraction, name: s
     await message.edit(view=None)
 
 
-@sticker_remove_command.autocomplete("name")
+@sticker_remove_slash_command.autocomplete("name")
 async def sticker_remove_autocomplete(self, inter: disnake.GuildCommandInteraction, name: str) -> list[str]:
     return [sticker.name for sticker in inter.guild.stickers if name.casefold() in sticker.name.casefold()][:25]
 
 
-@sticker_command.sub_command(name="rename")
-async def sticker_rename_command(inter: disnake.GuildCommandInteraction, name: str, new_name: str) -> None:
+@sticker_slash_command.sub_command(name="rename")
+async def sticker_rename_slash_command(inter: disnake.GuildCommandInteraction, name: str, new_name: str) -> None:
     """
     Rename a sticker in the server.
 
@@ -182,7 +182,7 @@ async def sticker_rename_command(inter: disnake.GuildCommandInteraction, name: s
     await inter.edit_original_response(f"`{name}` -> `{new_name}`", file=file)
 
 
-@sticker_rename_command.autocomplete("name")
+@sticker_rename_slash_command.autocomplete("name")
 async def sticker_rename_autocomplete(self, inter: disnake.GuildCommandInteraction, name: str) -> list[str]:
     return [sticker.name for sticker in inter.guild.stickers if name.casefold() in sticker.name.casefold()][:25]
 

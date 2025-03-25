@@ -15,11 +15,12 @@ def guild_has_banner(inter: disnake.GuildCommandInteraction) -> bool:
 
 
 @plugin.slash_command(name="server")
-async def server_command(inter: disnake.GuildCommandInteraction) -> None: ...
+async def server_slash_command(inter: disnake.GuildCommandInteraction) -> None: ...
 
 
-async def server_icon_command(inter: commands.Context[commands.Bot] | disnake.GuildCommandInteraction) -> None:
+async def _server_icon_command(inter: commands.Context[commands.Bot] | disnake.GuildCommandInteraction) -> None:
     file = await inter.guild.icon.with_size(1024).to_file()
+
     if isinstance(inter, disnake.Interaction):
         await inter.edit_original_response(file=file)
     else:
@@ -28,10 +29,10 @@ async def server_icon_command(inter: commands.Context[commands.Bot] | disnake.Gu
 
 @plugin.command(name="servericon", aliases=["server"])
 async def server_icon_prefix_command(ctx: commands.Context[commands.Bot]) -> None:
-    await server_icon_command(ctx)
+    await _server_icon_command(ctx)
 
 
-@server_command.sub_command(name="icon")
+@server_slash_command.sub_command(name="icon")
 async def server_icon_slash_command(
     inter: disnake.GuildCommandInteraction,
 ) -> None:
@@ -39,11 +40,12 @@ async def server_icon_slash_command(
     Display the guild's icon in the highest available resolution.
     """
     await inter.response.defer()
-    await server_icon_command(inter)
+    await _server_icon_command(inter)
 
 
-async def server_banner_command(inter: commands.Context[commands.Bot] | disnake.GuildCommandInteraction) -> None:
+async def _server_banner_command(inter: commands.Context[commands.Bot] | disnake.GuildCommandInteraction) -> None:
     file = await inter.guild.banner.with_size(1024).to_file()
+
     if isinstance(inter, disnake.Interaction):
         await inter.edit_original_response(file=file)
     else:
@@ -53,11 +55,11 @@ async def server_banner_command(inter: commands.Context[commands.Bot] | disnake.
 @commands.check(guild_has_banner)
 @plugin.command(name="serverbanner")
 async def server_banner_prefix_command(ctx: commands.Context[commands.Bot]) -> None:
-    await server_banner_command(ctx)
+    await _server_banner_command(ctx)
 
 
 @commands.check(guild_has_banner)
-@server_command.sub_command(name="banner")
+@server_slash_command.sub_command(name="banner")
 async def server_banner_slash_command(
     inter: disnake.GuildCommandInteraction,
 ) -> None:
@@ -65,7 +67,7 @@ async def server_banner_slash_command(
     Display the guild's banner in the highest available resolution.
     """
     await inter.response.defer()
-    await server_banner_command(inter)
+    await _server_banner_command(inter)
 
 
 setup, teardown = plugin.create_extension_handlers()

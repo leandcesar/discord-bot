@@ -13,11 +13,7 @@ logger = log.get_logger(__name__)
 plugin = Plugin[Bot]()
 
 
-@plugin.slash_command(name="member")
-async def member_command(inter: disnake.GuildCommandInteraction) -> None: ...
-
-
-async def avatar_command(
+async def _avatar_command(
     inter: commands.Context[commands.Bot] | disnake.GuildCommandInteraction,
     *,
     members: t.Sequence[disnake.Member],
@@ -25,6 +21,7 @@ async def avatar_command(
 ) -> None:
     if len(members) == 1:
         file = await members[0].display_avatar.with_size(1024).to_file()
+
         if isinstance(inter, disnake.Interaction):
             await inter.edit_original_response(file=file)
         else:
@@ -39,6 +36,7 @@ async def avatar_command(
             avatars.append(avatar)
         with asset.concatenate_assets(avatars, columns=int(columns), rows=int(rows)) as image_bytes:
             file = disnake.File(image_bytes, filename="avatars.png")
+
             if isinstance(inter, disnake.Interaction):
                 await inter.edit_original_response(file=file)
             else:
@@ -52,10 +50,10 @@ async def avatar_prefix_command(
 ) -> None:
     if not members:
         members = (ctx.author,)
-    await avatar_command(ctx, members=members)
+    await _avatar_command(ctx, members=members)
 
 
-@member_command.sub_command(name="avatar")
+@plugin.slash_command(name="avatar")
 async def avatar_slash_command(
     inter: disnake.GuildCommandInteraction,
     member: disnake.Member = commands.Param(lambda inter: inter.author),
@@ -95,10 +93,10 @@ async def avatar_slash_command(
             ],
         )
     )
-    await avatar_command(inter, members=members, format=format)
+    await _avatar_command(inter, members=members, format=format)
 
 
-async def banner_command(
+async def _banner_command(
     inter: commands.Context[commands.Bot] | disnake.GuildCommandInteraction,
     *,
     member: disnake.Member,
@@ -107,6 +105,7 @@ async def banner_command(
     if member.banner:
         file = await member.banner.with_size(1024).to_file()
         files.append(file)
+
     if isinstance(inter, disnake.Interaction):
         await inter.edit_original_response(files=files)
     else:
@@ -119,12 +118,10 @@ async def banner_prefix_command(
     *,
     member: disnake.Member = commands.Param(lambda ctx: ctx.author),
 ) -> None:
-    if member is None:
-        member = ctx.author
-    await banner_command(ctx, member=member)
+    await _banner_command(ctx, member=member)
 
 
-@member_command.sub_command(name="banner")
+@plugin.slash_command(name="banner")
 async def banner_slash_command(
     inter: disnake.GuildCommandInteraction,
     member: disnake.Member = commands.Param(lambda inter: inter.author),
@@ -137,7 +134,7 @@ async def banner_slash_command(
     member: The member whose banner will be retrieved and displayed.
     """
     await inter.response.defer()
-    await banner_command(inter, member=member)
+    await _banner_command(inter, member=member)
 
 
 setup, teardown = plugin.create_extension_handlers()

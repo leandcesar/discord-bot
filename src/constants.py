@@ -64,9 +64,14 @@ class Log:
 
 class Groq:
     api_key: str | None = os.getenv("GROQ_API_KEY")
-    model = "llama-3.3-70b-versatile"
+    chat_completations_model = "llama-3.3-70b-versatile"
+    transcriptions_model = "whisper-large-v3"
     temperature = 0.4
     max_completion_tokens = 512
+
+
+class WitAI:
+    access_token: str | None = os.getenv("WITAI_ACCESS_TOKEN")
 
 
 class AFK:
@@ -75,6 +80,12 @@ class AFK:
     path_filename = os.path.join(path, filename)
     turn_on = "🔕"
     turn_off = "🔔"
+
+
+class Reminder:
+    path = "data/"  # WARNING: if changed, add to .gitignore and update in docker-compose.yml
+    filename = "reminder.json"
+    path_filename = os.path.join(path, filename)
 
 
 def generate_startup_table(bot_name: str, bot_id: int) -> str:

@@ -30,7 +30,7 @@ async def on_message(message: disnake.Message) -> None:
         return None
     if message.content == str(result):
         return None
-    logger.debug(
+    logger.info(
         f"{message.content!r} ({message.id}) = {result!r}",
         extra={"context": message},
     )

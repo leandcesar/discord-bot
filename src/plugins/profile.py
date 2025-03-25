@@ -26,7 +26,7 @@ def guild_has_role_icons(inter: disnake.GuildCommandInteraction) -> bool:
 
 @commands.check(member_has_color_role)
 @plugin.slash_command(name="color")
-async def color_command(
+async def color_slash_command(
     inter: disnake.GuildCommandInteraction,
     hex: HEX | None = None,
     attachment: disnake.Attachment = commands.Param(lambda inter: inter.author.display_avatar),
@@ -71,7 +71,7 @@ async def color_command(
             await inter.edit_original_response(file=file, view=view)
 
 
-@color_command.autocomplete("hex")
+@color_slash_command.autocomplete("hex")
 async def color_autocomplete(inter: disnake.GuildCommandInteraction, value: str) -> list[str]:
     value = value.removeprefix("#")
     colors: list[str] = [HEX.random() for _ in range(25)]
@@ -83,7 +83,7 @@ async def color_autocomplete(inter: disnake.GuildCommandInteraction, value: str)
 @commands.check(member_has_badge_role)
 @commands.check(guild_has_role_icons)
 @plugin.slash_command(name="badge")
-async def badge_command(
+async def badge_slash_command(
     inter: disnake.GuildCommandInteraction,
     emoji: disnake.PartialEmoji | None = None,
     attachment: disnake.Attachment | None = None,
