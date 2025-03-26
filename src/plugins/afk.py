@@ -66,7 +66,7 @@ async def on_message(message: disnake.Message) -> None:
         if str(mention.id) in plugin.bot.afk_data:
             timestamp = int(plugin.bot.afk_data[str(mention.id)])
             content = f"{mention.mention} {constants.AFK.turn_on} (<t:{timestamp}:R>)"
-            logger.debug(
+            logger.info(
                 f"{message.content!r} ({message.id}) -> {content!r}",
                 extra={"context": message},
             )
@@ -80,7 +80,7 @@ async def on_message(message: disnake.Message) -> None:
         timestamp = int(plugin.bot.afk_data.pop(str(message.author.id)))
         content = f"{constants.AFK.turn_off} (<t:{timestamp}:R>)"
         await persist_afk_data()
-        logger.debug(
+        logger.info(
             f"{message.content!r} ({message.id}) -> {content!r}",
             extra={"context": message},
         )

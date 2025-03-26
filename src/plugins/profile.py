@@ -120,10 +120,10 @@ async def _badge_command(
     emote: Emote | None = None,
     attachment: disnake.Attachment | None = None,
 ) -> None:
-    if emote and emote.emoji:
-        role = await inter.author.top_role.edit(icon=None, emoji=emote.emoji)
-    elif emote and emote.custom_emoji:
-        icon = await emote.custom_emoji.read()
+    if emote and emote.is_unicode_emoji():
+        role = await inter.author.top_role.edit(icon=None, emoji=emote.name)
+    elif emote and emote.is_custom_emoji():
+        icon = await emote.read()
         role = await inter.author.top_role.edit(icon=icon, emoji=None)
     elif attachment:
         icon = await attachment.read()
@@ -162,7 +162,6 @@ async def badge_prefix_command(
 @plugin.slash_command(name="badge")
 async def badge_slash_command(
     inter: disnake.GuildCommandInteraction,
-    *,
     emote: Emote | None = None,
     attachment: disnake.Attachment | None = None,
 ) -> None:

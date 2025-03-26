@@ -39,7 +39,7 @@ async def on_message(message: disnake.Message) -> None:
         files=files,
     )
     await message.edit(suppress_embeds=True)
-    logger.debug(
+    logger.info(
         f"{message.content!r} ({message.id}) -> {content!r}",
         extra={"context": message},
     )
