@@ -10,15 +10,14 @@ logger = log.get_logger(__name__)
 
 plugin = Plugin[Bot]()
 
-PATTERN = r"^\(*\d+\.?\d*[0-9+\-*/.()^\s]+\d+\.?\d*\)*$"
-REGEX = re.compile(PATTERN)
+CALCULATOR_REGEX = re.compile(r"^\(*\d+\.?\d*[0-9+\-*/.()^\s]+\d+\.?\d*\)*$")
 
 
 @plugin.listener("on_message")
 async def on_message(message: disnake.Message) -> None:
     if message.author.bot:
         return None
-    if not REGEX.match(message.content):
+    if not CALCULATOR_REGEX.match(message.content):
         return None
     try:
         result = eval(message.content.replace("^", "**"))  # nosec # noqa: S307

@@ -6,6 +6,7 @@ from src import log
 from src.bot import Bot
 from src.components.palette import Palette
 from src.types.color import HEX
+from src.types.emote import Emote
 
 logger = log.get_logger(__name__)
 
@@ -24,6 +25,67 @@ def guild_has_role_icons(inter: disnake.GuildCommandInteraction) -> bool:
     return "ROLE_ICONS" in inter.guild.features
 
 
+async def _color_command(
+    inter: commands.Context[commands.Bot] | disnake.GuildCommandInteraction,
+    hex: HEX | None = None,
+    attachment: disnake.Attachment | None = None,
+) -> None:
+    if hex:
+        old_color = inter.author.color
+        role = await inter.author.top_role.edit(color=disnake.Color(int(hex)))
+        content = f"`{old_color}` -> `{role.color}`"
+
+        if isinstance(inter, disnake.Interaction):
+            await inter.edit_original_response(content)
+        else:
+            await inter.reply(content)
+    else:
+        if attachment is None:
+            attachment = inter.author.display_avatar
+        avatar = await attachment.read()
+        palette = Palette.from_bytes(avatar)
+
+        class Dropdown(disnake.ui.StringSelect):
+            async def callback(self, inter: disnake.MessageInteraction) -> None:
+                await inter.response.defer(ephemeral=True)
+                hex = self.values[0]
+                old_color = inter.author.color
+                role = await inter.author.top_role.edit(color=disnake.Color(int(hex)))
+                content = f"`{old_color}` -> `{role.color}`"
+
+                if isinstance(inter, disnake.Interaction):
+                    await inter.edit_original_response(content)
+                else:
+                    await inter.reply(content)
+
+        view = disnake.ui.View()
+        view.add_item(
+            Dropdown(
+                placeholder="Select a color...",
+                options=[
+                    disnake.SelectOption(label=f"{i}. #{color.hex}", value=int(color.hex))
+                    for i, color in enumerate(palette.colors)
+                ],
+            )
+        )
+        with palette.draw() as palette_image:
+            file = disnake.File(palette_image, filename="palette.png")
+
+            if isinstance(inter, disnake.Interaction):
+                await inter.edit_original_response(file=file, view=view)
+            else:
+                await inter.reply(file=file, view=view)
+
+
+@commands.check(member_has_color_role)
+@plugin.command(name="color", aliases=["cor"])
+async def color_prefix_command(
+    ctx: commands.Context[commands.Bot],
+    hex: HEX | None = None,
+) -> None:
+    await _color_command(ctx, hex=hex)
+
+
 @commands.check(member_has_color_role)
 @plugin.slash_command(name="color")
 async def color_slash_command(
@@ -40,35 +102,7 @@ async def color_slash_command(
     attachment: An image attachment to extract colors from (default: user's avatar).
     """
     await inter.response.defer(ephemeral=True)
-    if hex:
-        old_color = inter.author.color
-        role = await inter.author.top_role.edit(color=disnake.Color(int(hex)))
-        await inter.edit_original_response(f"`{old_color}` -> `{role.color}`")
-    else:
-        avatar = await attachment.read()
-        palette = Palette.from_bytes(avatar)
-
-        class Dropdown(disnake.ui.StringSelect):
-            async def callback(self, inter: disnake.MessageInteraction) -> None:
-                await inter.response.defer(ephemeral=True)
-                old_color = inter.author.color
-                hex = self.values[0]
-                role = await inter.author.top_role.edit(color=disnake.Color(int(hex)))
-                await inter.edit_original_response(f"`{old_color}` -> `{role.color}`")
-
-        view = disnake.ui.View()
-        view.add_item(
-            Dropdown(
-                placeholder="Select a color...",
-                options=[
-                    disnake.SelectOption(label=f"{i}. #{color.hex}", value=int(color.hex))
-                    for i, color in enumerate(palette.colors)
-                ],
-            )
-        )
-        with palette.draw() as palette_image:
-            file = disnake.File(palette_image, filename="palette.png")
-            await inter.edit_original_response(file=file, view=view)
+    await _color_command(inter, hex=hex, attachment=attachment)
 
 
 @color_slash_command.autocomplete("hex")
@@ -80,12 +114,56 @@ async def color_autocomplete(inter: disnake.GuildCommandInteraction, value: str)
     return sorted(colors)
 
 
+async def _badge_command(
+    inter: commands.Context[commands.Bot] | disnake.GuildCommandInteraction,
+    *,
+    emote: Emote | None = None,
+    attachment: disnake.Attachment | None = None,
+) -> None:
+    if emote and emote.emoji:
+        role = await inter.author.top_role.edit(icon=None, emoji=emote.emoji)
+    elif emote and emote.custom_emoji:
+        icon = await emote.custom_emoji.read()
+        role = await inter.author.top_role.edit(icon=icon, emoji=None)
+    elif attachment:
+        icon = await attachment.read()
+        role = await inter.author.top_role.edit(icon=icon, emoji=None)
+    else:
+        role = inter.author.top_role
+
+    if role.emoji:
+        if isinstance(inter, disnake.Interaction):
+            await inter.edit_original_response(role.emoji)
+        else:
+            await inter.reply(role.emoji)
+
+    if role.icon:
+        file = await role.icon.to_file()
+
+        if isinstance(inter, disnake.Interaction):
+            await inter.edit_original_response(file=file)
+        else:
+            await inter.reply(file=file)
+
+
+@commands.check(member_has_badge_role)
+@commands.check(guild_has_role_icons)
+@plugin.command(name="badge")
+async def badge_prefix_command(
+    ctx: commands.Context[commands.Bot],
+    emote: Emote | None = None,
+) -> None:
+    attachment = ctx.message.attachments[0] if ctx.message.attachments else None
+    await _badge_command(ctx, emote=emote, attachment=attachment)
+
+
 @commands.check(member_has_badge_role)
 @commands.check(guild_has_role_icons)
 @plugin.slash_command(name="badge")
 async def badge_slash_command(
     inter: disnake.GuildCommandInteraction,
-    emoji: disnake.PartialEmoji | None = None,
+    *,
+    emote: Emote | None = None,
     attachment: disnake.Attachment | None = None,
 ) -> None:
     """
@@ -93,23 +171,11 @@ async def badge_slash_command(
 
     Parameters
     ----------
-    emoji: The emoji (or emote) to set as your badge.
+    emote: The emoji (or emote) to set as your badge.
     attachment: An image file to use as the badge.
     """
     await inter.response.defer(ephemeral=True)
-    if emoji and emoji.is_unicode_emoji():
-        role = await inter.author.top_role.edit(icon=None, emoji=emoji)
-    elif emoji and emoji.is_custom_emoji():
-        role = await inter.author.top_role.edit(icon=emoji, emoji=None)
-    elif attachment:
-        emoji = await attachment.read()
-        role = await inter.author.top_role.edit(icon=emoji, emoji=None)
-    else:
-        role = inter.author.top_role
-    badge = role.icon if role.icon else role.emoji if role.emoji else None
-    if badge:
-        file = await badge.to_file()
-        await inter.edit_original_response(file=file)
+    await _badge_command(inter, emote=emote, attachment=attachment)
 
 
 setup, teardown = plugin.create_extension_handlers()

@@ -17,7 +17,6 @@ async def _avatar_command(
     inter: commands.Context[commands.Bot] | disnake.GuildCommandInteraction,
     *,
     members: t.Sequence[disnake.Member],
-    format: str | None = None,
 ) -> None:
     if len(members) == 1:
         file = await members[0].display_avatar.with_size(1024).to_file()
@@ -28,13 +27,10 @@ async def _avatar_command(
             await inter.reply(file=file)
     else:
         avatars = []
-        if format is None:
-            format = f"{len(members)}x1"
-        columns, rows = format.split("x")
         for member in members:
             avatar = await member.display_avatar.with_size(1024).read()
             avatars.append(avatar)
-        with asset.concatenate_assets(avatars, columns=int(columns), rows=int(rows)) as image_bytes:
+        with asset.concatenate_assets(avatars, columns=len(members), rows=1) as image_bytes:
             file = disnake.File(image_bytes, filename="avatars.png")
 
             if isinstance(inter, disnake.Interaction):
@@ -57,16 +53,6 @@ async def avatar_prefix_command(
 async def avatar_slash_command(
     inter: disnake.GuildCommandInteraction,
     member: disnake.Member = commands.Param(lambda inter: inter.author),
-    member2: disnake.Member | None = None,
-    member3: disnake.Member | None = None,
-    member4: disnake.Member | None = None,
-    member5: disnake.Member | None = None,
-    member6: disnake.Member | None = None,
-    member7: disnake.Member | None = None,
-    member8: disnake.Member | None = None,
-    member9: disnake.Member | None = None,
-    member10: disnake.Member | None = None,
-    format: str | None = None,
 ) -> None:
     """
     Display the specified member's avatar(s) in the highest available resolution.
@@ -76,24 +62,7 @@ async def avatar_slash_command(
     member: The member whose avatar(s) will be retrieved and displayed.
     """
     await inter.response.defer()
-    members = list(
-        filter(
-            lambda member: member is not None,
-            [
-                member,
-                member2,
-                member3,
-                member4,
-                member5,
-                member6,
-                member7,
-                member8,
-                member9,
-                member10,
-            ],
-        )
-    )
-    await _avatar_command(inter, members=members, format=format)
+    await _avatar_command(inter, members=[member])
 
 
 async def _banner_command(

@@ -3,7 +3,7 @@ from disnake_plugins import Plugin
 
 from src import log
 from src.bot import Bot
-from src.components import application_webhook
+from src.util.webhook import application_webhook
 
 logger = log.get_logger(__name__)
 

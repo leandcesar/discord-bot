@@ -27,7 +27,15 @@ async def on_command(ctx: commands.Context[Bot]) -> None:
 
 
 @plugin.listener("on_slash_command")
-async def on_slash_command(inter: disnake.GuildCommandInteraction) -> None:
+async def on_slash_command(inter: disnake.ApplicationCommandInteraction) -> None:
+    logger.info(
+        f"/{inter.application_command.qualified_name} {inter.options}",
+        extra={"context": inter},
+    )
+
+
+@plugin.listener("message_command")
+async def message_command(inter: disnake.ApplicationCommandInteraction) -> None:
     logger.info(
         f"/{inter.application_command.qualified_name} {inter.options}",
         extra={"context": inter},
@@ -46,15 +54,36 @@ async def on_modal_submit(inter: disnake.ModalInteraction) -> None:
 async def on_command_error(ctx: commands.Context[Bot], e: Exception) -> None:
     if isinstance(e, commands.errors.CommandNotFound):
         return None
-    logger.error(
-        f"{ctx.message.content} ({ctx.message.id}) {e}",
-        extra={"context": ctx},
-        exc_info=e,
-    )
+    elif isinstance(e, commands.errors.MissingRequiredArgument):
+        logger.warning(
+            f"{ctx.message.content} ({ctx.message.id}) {e}",
+            extra={"context": ctx},
+        )
+    else:
+        logger.error(
+            f"{ctx.message.content} ({ctx.message.id}) {e}",
+            extra={"context": ctx},
+            exc_info=e,
+        )
 
 
 @plugin.listener("on_slash_command_error")
-async def on_slash_command_error(inter: disnake.GuildCommandInteraction, e: Exception) -> None:
+async def on_slash_command_error(inter: disnake.ApplicationCommandInteraction, e: Exception) -> None:
+    if isinstance(e, commands.errors.MissingRequiredArgument):
+        logger.warning(
+            f"/{inter.application_command.qualified_name} {inter.options} {e}",
+            extra={"context": inter},
+        )
+    else:
+        logger.error(
+            f"/{inter.application_command.qualified_name} {inter.options} {e}",
+            extra={"context": inter},
+            exc_info=e,
+        )
+
+
+@plugin.listener("message_command_error")
+async def message_command_error(inter: disnake.ApplicationCommandInteraction, e: Exception) -> None:
     logger.error(
         f"/{inter.application_command.qualified_name} {inter.options} {e}",
         extra={"context": inter},
