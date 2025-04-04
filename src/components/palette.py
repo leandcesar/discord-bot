@@ -8,13 +8,11 @@ from contextlib import contextmanager
 
 from PIL import Image, ImageDraw
 
-from src.types.color import Color
-
-__all__ = ("Palette",)
+from src.converters.hex import HEX
 
 
 class Palette:
-    def __init__(self, colors: list[Color]) -> None:
+    def __init__(self, colors: list[HEX]) -> None:
         self.colors = colors
 
     @staticmethod
@@ -25,10 +23,10 @@ class Palette:
     def from_image(cls, image: Image.Image, /, *, top_n: int = 10) -> Palette:
         pixels = image.convert("RGB").getdata()
         pixels_counts = Counter(pixels)
-        colors: list[Color] = []
+        colors: list[HEX] = []
         for (r, g, b), count in pixels_counts.most_common():
             if not any(cls.color_distance((r, g, b), color.rgb) < 15 for color in colors):
-                color = Color(r, g, b)
+                color = HEX(r, g, b)
                 colors.append(color)
             if len(colors) >= top_n:
                 break

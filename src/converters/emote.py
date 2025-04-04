@@ -1,9 +1,8 @@
-from __future__ import annotations
-
 import re
 
 import disnake
 from disnake.ext import commands
+from disnake.ext.commands.errors import BadArgument
 
 CUSTOM_EMOTE_REGEX = re.compile(r"<(a?):(\w+):(\d+)>")
 UNICODE_EMOJI_REGEX = re.compile(
@@ -22,13 +21,14 @@ UNICODE_EMOJI_REGEX = re.compile(
 
 
 class Emote(disnake.PartialEmoji):
+    @staticmethod
+    def _validate(value: str) -> bool:
+        return bool(UNICODE_EMOJI_REGEX.match(value) or CUSTOM_EMOTE_REGEX.match(value))
+
     @commands.converter_method
     async def convert(cls, inter: disnake.CommandInteraction, value: str) -> disnake.PartialEmoji:  # noqa: N805
-        if UNICODE_EMOJI_REGEX.match(value):
-            return cls.from_str(value)  # type: ignore
-        elif CUSTOM_EMOTE_REGEX.match(value):
-            instance = cls.from_str(value)  # type: ignore
-            instance._state = inter._state
-            return instance
-        else:
-            raise ValueError("")  # TODO: add message
+        if not cls._validate(value):
+            raise BadArgument(f"Invalid emoji or custom emote: {value!r}")
+        instance = cls.from_str(value)  # type: ignore
+        instance._state = inter._state
+        return instance

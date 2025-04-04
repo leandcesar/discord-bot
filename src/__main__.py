@@ -7,9 +7,9 @@ import sys
 
 import disnake
 
-from src import constants, log
+from src import config, log
 from src.bot import Bot
-from src.constants import Client
+from src.config import Client
 
 logger = log.get_logger(__name__)
 
@@ -19,15 +19,15 @@ _intents = disnake.Intents.all()
 async def main() -> None:
     bot = Bot(
         intents=_intents,
-        prefix=constants.Client.prefix,
-        owner_ids=set(constants.Client.owner_ids),
-        reload=constants.Client.reload,
-        test_guilds=set(constants.Client.test_guilds),
+        prefix=config.Client.prefix,
+        owner_ids=set(config.Client.owner_ids),
+        reload=config.Client.reload,
+        test_guilds=set(config.Client.test_guilds),
     )
     bot.i18n.load("src/locale/")  # type: ignore[reportUnknownMemberType]
 
     try:
-        bot.load_extensions("src/plugins")
+        bot.load_extensions("src/extensions")
     except Exception as e:
         await bot.close()
         raise e

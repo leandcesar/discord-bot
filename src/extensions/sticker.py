@@ -1,21 +1,19 @@
 import disnake
 from disnake.ext import commands
+from disnake.ext.commands.errors import MissingRequiredArgument
 from disnake_plugins import Plugin
 
-from src import log
 from src.bot import Bot
 from src.components import buttons
 from src.util import asset
 from src.util.message import fetch_assets_content
-
-logger = log.get_logger(__name__)
 
 plugin = Plugin[Bot]()
 
 
 @commands.has_permissions(manage_emojis_and_stickers=True)
 @plugin.slash_command(name="sticker")
-async def sticker_slash_command(inter: disnake.GuildCommandInteraction) -> None:
+async def sticker_slash_command(inter: disnake.ApplicationCommandInteraction) -> None:
     """
     Command for managing server stickers.
 
@@ -27,7 +25,7 @@ async def sticker_slash_command(inter: disnake.GuildCommandInteraction) -> None:
 
 @sticker_slash_command.sub_command(name="add")
 async def sticker_add_slash_command(
-    inter: disnake.GuildCommandInteraction,
+    inter: disnake.ApplicationCommandInteraction,
     name: str,
     emoji: str,
     attachment: disnake.Attachment,
@@ -47,11 +45,11 @@ async def sticker_add_slash_command(
         file = disnake.File(sticker_bytes, filename=f"{name}.png")
         guild_sticker = await inter.guild.create_sticker(name=name, emoji=emoji, file=file)
         file = await guild_sticker.to_file()
-        await inter.edit_original_response(f"`{name}`", file=file)
+        await plugin.bot.reply(inter, f"`{name}`", file=file)
 
 
 @sticker_slash_command.sub_command(name="remove")
-async def sticker_remove_slash_command(inter: disnake.GuildCommandInteraction, name: str) -> None:
+async def sticker_remove_slash_command(inter: disnake.ApplicationCommandInteraction, name: str) -> None:
     """
     Remove a sticker from the server.
 
@@ -63,24 +61,26 @@ async def sticker_remove_slash_command(inter: disnake.GuildCommandInteraction, n
     guild_sticker = [sticker for sticker in inter.guild.stickers if name.casefold() == sticker.name.casefold()][0]
     file = await guild_sticker.to_file()
     view = buttons.DeleteView()
-    message = await inter.edit_original_response(file=file, view=view)
+    message = await plugin.bot.reply(inter, file=file, view=view)
     await view.wait()
     if view.value:
         sticker = await guild_sticker.read()
         with asset.to_black_and_white(sticker) as emote_bytes:
             file = disnake.File(emote_bytes, filename=f"{guild_sticker.name}.png")
             await guild_sticker.delete()
-            await inter.send(file=file)
+            await plugin.bot.reply(inter, file=file)
     await message.edit(view=None)
 
 
 @sticker_remove_slash_command.autocomplete("name")
-async def sticker_remove_autocomplete(self, inter: disnake.GuildCommandInteraction, name: str) -> list[str]:
+async def sticker_remove_autocomplete(self, inter: disnake.ApplicationCommandInteraction, name: str) -> list[str]:
     return [sticker.name for sticker in inter.guild.stickers if name.casefold() in sticker.name.casefold()][:25]
 
 
 @sticker_slash_command.sub_command(name="rename")
-async def sticker_rename_slash_command(inter: disnake.GuildCommandInteraction, name: str, new_name: str) -> None:
+async def sticker_rename_slash_command(
+    inter: disnake.ApplicationCommandInteraction, name: str, new_name: str
+) -> None:
     """
     Rename a sticker in the server.
 
@@ -93,11 +93,11 @@ async def sticker_rename_slash_command(inter: disnake.GuildCommandInteraction, n
     guild_sticker = [sticker for sticker in inter.guild.stickers if name.casefold() == sticker.name.casefold()][0]
     await guild_sticker.edit(name=new_name)
     file = await guild_sticker.to_file()
-    await inter.edit_original_response(f"`{name}` -> `{new_name}`", file=file)
+    await plugin.bot.reply(inter, f"`{name}` -> `{new_name}`", file=file)
 
 
 @sticker_rename_slash_command.autocomplete("name")
-async def sticker_rename_autocomplete(self, inter: disnake.GuildCommandInteraction, name: str) -> list[str]:
+async def sticker_rename_autocomplete(self, inter: disnake.ApplicationCommandInteraction, name: str) -> list[str]:
     return [sticker.name for sticker in inter.guild.stickers if name.casefold() in sticker.name.casefold()][:25]
 
 
@@ -107,15 +107,14 @@ async def sticker_add_message_command(inter: disnake.MessageCommandInteraction, 
     await inter.response.defer()
     datas = await fetch_assets_content(message)
     if datas:
-        if len(datas) > 1:
-            raise Exception(datas)  # TODO: add error message
-        with asset.resize_asset(datas[0], width=320, height=320) as sticker_bytes:
-            file = disnake.File(sticker_bytes, filename=f"{message.id}.png")
-            guild_sticker = await inter.guild.create_sticker(name=str(message.id), emoji="❓", file=file)
-            file = await guild_sticker.to_file()
-            await inter.edit_original_response(file=file)
+        for data in datas:
+            with asset.resize_asset(data, width=320, height=320) as sticker_bytes:
+                file = disnake.File(sticker_bytes, filename=f"{message.id}.png")
+                guild_sticker = await inter.guild.create_sticker(name=str(message.id), emoji="❓", file=file)
+                file = await guild_sticker.to_file()
+                await plugin.bot.reply(inter, file=file)
     else:
-        await inter.edit_original_response("💨")
+        raise MissingRequiredArgument("No media found in the message.")
 
 
 setup, teardown = plugin.create_extension_handlers()

@@ -1,10 +1,6 @@
-from __future__ import annotations
-
 import disnake
 
 from src.bot import Bot
-
-__all__ = ("application_webhook",)
 
 
 async def application_webhook(

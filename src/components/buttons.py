@@ -1,7 +1,5 @@
 import disnake
 
-__all__ = ("ConfirmView", "DeleteView")
-
 
 class ConfirmView(disnake.ui.View):
     def __init__(self, timeout: float | None = 180.0) -> None:

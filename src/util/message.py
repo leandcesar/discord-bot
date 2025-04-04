@@ -1,10 +1,6 @@
-from __future__ import annotations
-
 import re
 
 import disnake
-
-__all__ = ("fetch_assets_content", "fetch_assets_url", "fetch_emojis")
 
 
 async def fetch_emojis(message: disnake.Message, /) -> list[disnake.Emoji]:
@@ -26,3 +22,13 @@ async def fetch_assets_url(message: disnake.Message, /) -> list[str]:
     datas.extend([x.url for x in await fetch_emojis(message)])
     datas.extend([x.url for x in message.stickers])
     return datas
+
+
+async def stringfy(message: disnake.Message, /) -> str:
+    datetime = message.created_at.strftime("%Y-%m-%d %H:%M:%S")
+    author = message.author.top_role.name
+    attachment_urls = " ".join([f"<{attachment.url}>" for attachment in message.attachments])
+    content = message.content
+    for mention in message.mentions:
+        content = content.replace(f"<@{mention.id}>", f"@{mention.top_role.name}")
+    return f"[{datetime}] @{author}: {content} {attachment_urls}"

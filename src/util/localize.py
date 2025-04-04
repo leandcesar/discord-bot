@@ -5,11 +5,6 @@ import typing as t
 if t.TYPE_CHECKING:
     from disnake import Locale, LocalizationProtocol, LocalizationStore
 
-__all__ = (
-    "LocalizedStr",
-    "Localization",
-)
-
 LocalizedStr = t.NewType("LocalizedStr", str)
 
 

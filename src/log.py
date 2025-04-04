@@ -1,14 +1,6 @@
-from __future__ import annotations
-
 import logging
-import logging.handlers
 
-from src import constants
-
-__all__ = (
-    "get_logger",
-    "logger",
-)
+from src import config
 
 
 class LoggingFormatter(logging.Formatter):
@@ -34,7 +26,7 @@ class LoggingFormatter(logging.Formatter):
             "(black){asctime}(reset)"
             " (levelcolor){levelname}(reset)"
             " (green){name}.{funcName}()(reset)"
-            " {context}{message}"
+            "{context}: {message}"
         )
         fmt = fmt.replace("(black)", self.black + self.bold)
         fmt = fmt.replace("(reset)", self.reset)
@@ -46,27 +38,29 @@ class LoggingFormatter(logging.Formatter):
 
 class ContextFilter(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:
-        if hasattr(record, "context") and record.context:
-            guild = f"{record.context.guild} ({record.context.guild.id})"
-            channel = f"{record.context.channel} ({record.context.channel.id})"
-            author = f"{record.context.author} ({record.context.author.id})"
-            record.context = f"{guild} #{channel} @{author} "
-        else:
-            record.context = ""
+        context = ""
+        if hasattr(record, "inter"):
+            if hasattr(record.inter, "guild"):
+                context += f" {record.inter.guild.name} ({record.inter.guild.id})"
+            if getattr(record.inter, "channel"):
+                context += f" #{record.inter.channel.name} ({record.inter.channel.id})"
+            if getattr(record.inter, "author"):
+                context += f" @{record.inter.author.name} ({record.inter.author.id})"
+        record.context = context  # type: ignore[attr-defined]
         return True
 
 
 formatter = LoggingFormatter()
-author_filter = ContextFilter()
+context_filter = ContextFilter()
 
 logger = logging.getLogger()
-logger.setLevel(constants.Log.level)
-logger.addFilter(author_filter)
+logger.setLevel(config.Log.level)
+logger.addFilter(context_filter)
 
 stdout_handler = logging.StreamHandler()
-stdout_handler.setLevel(constants.Log.level)
+stdout_handler.setLevel(config.Log.level)
 stdout_handler.setFormatter(formatter)
-stdout_handler.addFilter(author_filter)
+stdout_handler.addFilter(context_filter)
 logger.addHandler(stdout_handler)
 
 logging.getLogger("disnake").setLevel(logging.WARNING)

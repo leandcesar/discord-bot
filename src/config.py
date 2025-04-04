@@ -22,11 +22,6 @@ else:
     if dotenv.find_dotenv():
         dotenv.load_dotenv(override=True)
 
-__all__ = (
-    "Client",
-    "generate_startup_table",
-)
-
 
 class Client:
     prefix = os.getenv("BOT_PREFIX", "%")
@@ -66,7 +61,7 @@ class Groq:
     api_key: str | None = os.getenv("GROQ_API_KEY")
     chat_completations_model = "llama-3.3-70b-versatile"
     transcriptions_model = "whisper-large-v3"
-    temperature = 0.4
+    temperature = 0.5
     max_completion_tokens = 512
 
 
@@ -74,18 +69,18 @@ class WitAI:
     access_token: str | None = os.getenv("WITAI_ACCESS_TOKEN")
 
 
-class AFK:
+class File:
     path = "data/"  # WARNING: if changed, add to .gitignore and update in docker-compose.yml
-    filename = "afk.json"
-    path_filename = os.path.join(path, filename)
-    turn_on = "🔕"
-    turn_off = "🔔"
+    afk = os.path.join(path, "afk.json")
+    alias = os.path.join(path, "alias.json")
+    reminder = os.path.join(path, "reminder.json")
 
 
-class Reminder:
-    path = "data/"  # WARNING: if changed, add to .gitignore and update in docker-compose.yml
-    filename = "reminder.json"
-    path_filename = os.path.join(path, filename)
+class Emoji:
+    afk_turn_on = "🔕"
+    afk_turn_off = "🔔"
+    remind_created = "📅"
+    remind_delivered = "⏰"
 
 
 def generate_startup_table(bot_name: str, bot_id: int) -> str:

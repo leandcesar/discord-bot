@@ -1,18 +1,15 @@
 import disnake
 from disnake_plugins import Plugin
 
-from src import log
 from src.bot import Bot
 from src.util.webhook import application_webhook
-
-logger = log.get_logger(__name__)
 
 plugin = Plugin[Bot]()
 
 
 @plugin.slash_command(name="fake")
 async def fake_command(
-    inter: disnake.GuildCommandInteraction,
+    inter: disnake.ApplicationCommandInteraction,
     member: disnake.Member,
     content: str,
     attachment: disnake.Attachment | None = None,
@@ -36,7 +33,7 @@ async def fake_command(
         files=files,
         wait=True,
     )
-    await inter.edit_original_response(webhook_message.jump_url)
+    await plugin.bot.reply(inter, webhook_message.jump_url)
 
 
 setup, teardown = plugin.create_extension_handlers()
