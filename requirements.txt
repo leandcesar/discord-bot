@@ -2,3 +2,4 @@ aiohttp==3.11.12
 disnake==2.10.1
 pillow==11.1.0
 git+https://github.com/DisnakeCommunity/disnake-ext-plugins
+spotdl==4.2.11
