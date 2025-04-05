@@ -1,14 +1,9 @@
-import typing as t
-
 import disnake
 from disnake.ext import commands
 from disnake_plugins import Plugin
 
-from src import log
 from src.bot import Bot
 from src.util import asset
-
-logger = log.get_logger(__name__)
 
 plugin = Plugin[Bot]()
 
@@ -16,7 +11,7 @@ plugin = Plugin[Bot]()
 async def _avatar_command(
     inter: commands.Context[Bot] | disnake.ApplicationCommandInteraction,
     *,
-    members: t.Sequence[disnake.Member],
+    members: tuple[disnake.Member | disnake.User, ...],
 ) -> None:
     if len(members) == 1:
         file = await members[0].display_avatar.with_size(1024).to_file()
@@ -28,10 +23,10 @@ async def _avatar_command(
             await plugin.bot.reply(inter, file=file)
 
 
-@plugin.command(name="avatar")
+@plugin.command(name="avatar", description="Display the specified member's avatar(s).")
 async def avatar_prefix_command(
     ctx: commands.Context[Bot],
-    *members: disnake.Member,
+    *members: disnake.Member | disnake.User,
 ) -> None:
     if not members:
         members = (ctx.author,)
@@ -41,36 +36,38 @@ async def avatar_prefix_command(
 @plugin.slash_command(name="avatar")
 async def avatar_slash_command(
     inter: disnake.ApplicationCommandInteraction,
-    member: disnake.Member = commands.Param(lambda inter: inter.author),
+    member: disnake.Member | disnake.User = commands.Param(lambda inter: inter.author),
 ) -> None:
     """
-    Display the specified member's avatar(s) in the highest available resolution.
+    Display the specified member's avatar(s).
 
     Parameters
     ----------
     member: The member whose avatar(s) will be retrieved and displayed.
     """
     await inter.response.defer()
-    await _avatar_command(inter, members=[member])
+    await _avatar_command(inter, members=(member,))
 
 
 async def _banner_command(
     inter: commands.Context[Bot] | disnake.ApplicationCommandInteraction,
     *,
-    member: disnake.Member,
+    member: disnake.Member | disnake.User,
 ) -> None:
     files = []
-    if member.banner:
-        file = await member.banner.with_size(1024).to_file()
-        files.append(file)
+    user = await plugin.bot.fetch_user(member.id)
+    if not user.banner:
+        raise Exception()
+    file = await user.banner.with_size(1024).to_file()
+    files.append(file)
     await plugin.bot.reply(inter, files=files)
 
 
-@plugin.command(name="banner")
+@plugin.command(name="banner", description="Display the specified member's banner.")
 async def banner_prefix_command(
     ctx: commands.Context[Bot],
     *,
-    member: disnake.Member | None = None,
+    member: disnake.Member | disnake.User | None = None,
 ) -> None:
     if member is None:
         member = ctx.author
@@ -80,10 +77,10 @@ async def banner_prefix_command(
 @plugin.slash_command(name="banner")
 async def banner_slash_command(
     inter: disnake.ApplicationCommandInteraction,
-    member: disnake.Member = commands.Param(lambda inter: inter.author),
+    member: disnake.Member | disnake.User = commands.Param(lambda inter: inter.author),
 ) -> None:
     """
-    Display the specified member's banner in the highest available resolution.
+    Display the specified member's banner.
 
     Parameters
     ----------

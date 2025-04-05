@@ -28,6 +28,7 @@ class Bot(commands.Bot):
             owner_ids=owner_ids,
             reload=reload,
             test_guilds=test_guilds,
+            help_command=None,
         )
         self.start_time: dt.datetime = dt.datetime.now(tz=dt.timezone.utc)
         self.localization = Localization(self.i18n)
@@ -49,46 +50,44 @@ class Bot(commands.Bot):
             await self.change_presence(activity=activity, status=config.Client.activity_status)
 
     async def on_command(self, inter: commands.Context) -> None:
-        logger.info(f"{inter.message.content!r} ({inter.message.id})", extra={"context": inter})
+        logger.info(f"{inter.message.content!r} ({inter.message.id})", extra={"inter": inter})
 
     async def on_slash_command(self, inter: disnake.ApplicationCommandInteraction) -> None:
-        logger.info(f"/{inter.application_command.qualified_name} {inter.options}", extra={"context": inter})
+        logger.info(f"/{inter.application_command.qualified_name} {inter.options}", extra={"inter": inter})
 
-    async def message_command(self, inter: disnake.MessageInteraction) -> None:
-        logger.info(f"/{inter.application_command.qualified_name} {inter.options}", extra={"context": inter})
+    async def on_message_command(self, inter: disnake.MessageInteraction) -> None:
+        logger.info(f"/{inter.application_command.qualified_name} {inter.options}", extra={"inter": inter})
 
     async def on_modal_submit(self, inter: disnake.ModalInteraction) -> None:
-        logger.info(f"{inter.data}", extra={"context": inter})
+        logger.info(f"{inter.data}", extra={"inter": inter})
 
     async def on_command_error(self, inter: commands.Context, e: Exception) -> None:
         if isinstance(e, commands.errors.CommandNotFound):
             return None
         elif isinstance(e, commands.errors.MissingRequiredArgument):
-            logger.warning(f"{inter.message.content!r} ({inter.message.id}) = {e}", extra={"context": inter})
+            logger.warning(f"{inter.message.content!r} ({inter.message.id}) = {e}", extra={"inter": inter})
         else:
-            logger.error(
-                f"{inter.message.content!r} ({inter.message.id}) = {e}", extra={"context": inter}, exc_info=e
-            )
+            logger.error(f"{inter.message.content!r} ({inter.message.id}) = {e}", extra={"inter": inter}, exc_info=e)
             await self.reply(inter, str(e))
 
     async def on_slash_command_error(self, inter: disnake.ApplicationCommandInteraction, e: Exception) -> None:
         if isinstance(e, commands.errors.MissingRequiredArgument):
             logger.warning(
                 f"/{inter.application_command.qualified_name} {inter.options} = {e}",
-                extra={"context": inter},
+                extra={"inter": inter},
             )
         else:
             logger.error(
                 f"/{inter.application_command.qualified_name} {inter.options} = {e}",
-                extra={"context": inter},
+                extra={"inter": inter},
                 exc_info=e,
             )
             await self.reply(inter, str(e))
 
-    async def message_command_error(self, inter: disnake.MessageInteraction, e: Exception) -> None:
+    async def on_message_command_error(self, inter: disnake.MessageInteraction, e: Exception) -> None:
         logger.error(
             f"/{inter.application_command.qualified_name} {inter.options} = {e}",
-            extra={"context": inter},
+            extra={"inter": inter},
             exc_info=e,
         )
         await self.reply(inter, str(e))
@@ -114,7 +113,7 @@ class Bot(commands.Bot):
             sender = inter.send
         else:
             raise TypeError(f"Unsupported interaction type: {type(inter)}.")
-        logger.debug(f"{content!r}", extra={"context": inter})
+        logger.debug(f"{content!r}", extra={"inter": inter})
         return await sender(content, **kwargs)
 
     async def get_or_fetch_owners(self) -> list[disnake.User]:

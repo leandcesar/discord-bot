@@ -8,7 +8,6 @@ from src.bot import Bot
 from src.util.webhook import application_webhook
 
 logger = log.get_logger(__name__)
-
 plugin = Plugin[Bot]()
 
 
@@ -20,14 +19,14 @@ async def stalker_load_hook() -> None:
 
 @plugin.listener("on_message")
 async def on_message(message: disnake.Message) -> None:
-    logger.debug(f"{message.content!r} ({message.id})", extra={"context": message})
+    logger.debug(f"{message.content!r} ({message.id})", extra={"inter": message})
 
 
 @plugin.listener("on_message_edit")
 async def on_message_edit(before: disnake.Message, after: disnake.Message) -> None:
     if before.author.bot:
         return None
-    logger.debug(f"{before.content!r} ({before.id}) = {after.content!r}", extra={"context": before})
+    logger.debug(f"{before.content!r} ({before.id}) = {after.content!r}", extra={"inter": before})
     plugin.bot.edited_messages.append(before)
 
 
@@ -35,7 +34,7 @@ async def on_message_edit(before: disnake.Message, after: disnake.Message) -> No
 async def on_message_delete(message: disnake.Message) -> None:
     if message.author.bot:
         return None
-    logger.info(f"{message.content!r} ({message.id})", extra={"context": message})
+    logger.info(f"{message.content!r} ({message.id})", extra={"inter": message})
     plugin.bot.deleted_messages.append(message)
 
 
@@ -71,7 +70,7 @@ async def _snipe_command(
         raise CommandError("Make sure at least one message has been deleted.")
 
 
-@plugin.command(name="snipe")
+@plugin.command(name="snipe", description="Restore the last deleted message in the current channel.")
 async def snipe_prefix_command(ctx: commands.Context[Bot], offset: int = 1) -> None:
     await _snipe_command(ctx, offset=offset)
 

@@ -20,7 +20,7 @@ async def _server_icon_command(inter: commands.Context[Bot] | disnake.Applicatio
     await plugin.bot.reply(inter, file=file)
 
 
-@plugin.command(name="servericon", aliases=["server"])
+@plugin.command(name="servericon", aliases=["server"], description="Display the guild's icon.")
 async def server_icon_prefix_command(ctx: commands.Context[Bot]) -> None:
     await _server_icon_command(ctx)
 
@@ -30,7 +30,7 @@ async def server_icon_slash_command(
     inter: disnake.ApplicationCommandInteraction,
 ) -> None:
     """
-    Display the guild's icon in the highest available resolution.
+    Display the guild's icon.
     """
     await inter.response.defer()
     await _server_icon_command(inter)
@@ -42,7 +42,7 @@ async def _server_banner_command(inter: commands.Context[Bot] | disnake.Applicat
 
 
 @commands.check(guild_has_banner)
-@plugin.command(name="serverbanner")
+@plugin.command(name="serverbanner", description="Display the guild's banner.")
 async def server_banner_prefix_command(ctx: commands.Context[Bot]) -> None:
     await _server_banner_command(ctx)
 
@@ -53,7 +53,7 @@ async def server_banner_slash_command(
     inter: disnake.ApplicationCommandInteraction,
 ) -> None:
     """
-    Display the guild's banner in the highest available resolution.
+    Display the guild's banner.
     """
     await inter.response.defer()
     await _server_banner_command(inter)

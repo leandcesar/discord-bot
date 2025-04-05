@@ -63,7 +63,7 @@ async def _color_command(
 
 
 @commands.check(member_has_color_role)
-@plugin.command(name="color", aliases=["cor"])
+@plugin.command(name="color", aliases=["cor"], description="Change the color of your username on the server.")
 async def color_prefix_command(
     ctx: commands.Context[Bot],
     hex: HEX | None = None,
@@ -124,7 +124,7 @@ async def _badge_command(
 
 @commands.check(member_has_badge_role)
 @commands.check(guild_has_role_icons)
-@plugin.command(name="badge")
+@plugin.command(name="badge", description="Change your badge on the server.")
 async def badge_prefix_command(
     ctx: commands.Context[Bot],
     emote: Emote | None = None,

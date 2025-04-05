@@ -22,7 +22,7 @@ async def _afk_command(inter: commands.Context[Bot] | disnake.ApplicationCommand
     await plugin.bot.reply(inter, f"{config.Emoji.afk_turn_on} (<t:{timestamp}:R>)")
 
 
-@plugin.command(name="afk")
+@plugin.command(name="afk", description="Let others know you're AFK (Away From Keyboard).")
 async def afk_prefix_command(ctx: commands.Context[Bot]) -> None:
     await _afk_command(ctx)
 

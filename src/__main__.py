@@ -12,7 +12,6 @@ from src.bot import Bot
 from src.config import Client
 
 logger = log.get_logger(__name__)
-
 _intents = disnake.Intents.all()
 
 

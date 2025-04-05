@@ -7,7 +7,7 @@ from src.bot import Bot
 
 plugin = Plugin[Bot]()
 
-CALCULATOR_REGEX = re.compile(r"^\(*\d+\.?\d*[0-9+\-*/.()^\s]+\d+\.?\d*\)*$")
+CALCULATOR_REGEX = re.compile(r"^\(*\d+\.?\d*[0-9+\-*/.()^\s]+\d+\.?\d*\)+$")
 
 
 @plugin.listener("on_message")
