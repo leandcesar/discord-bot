@@ -109,10 +109,8 @@ class Bot(commands.Bot):
             sender = inter.reply
         elif isinstance(inter, disnake.Interaction):
             sender = inter.edit_original_response if inter.response.is_done() else inter.send
-        elif isinstance(inter, disnake.Messageable):
-            sender = inter.send
         else:
-            raise TypeError(f"Unsupported interaction type: {type(inter)}.")
+            sender = inter.send
         logger.debug(f"{content!r}", extra={"inter": inter})
         return await sender(content, **kwargs)
 

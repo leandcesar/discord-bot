@@ -35,7 +35,7 @@ async def on_message(message: disnake.Message) -> None:
     urls = replace_all(urls, ("instagram.com", "instagramez.com"), ("twitter", "fxtwitter"), ("x", "fxtwitter"))
     content = "\n".join(urls)
     await message.edit(suppress_embeds=True)
-    await plugin.bot.reply(message, content)
+    await plugin.bot.reply(message, content, mention_author=False)
 
 
 setup, teardown = plugin.create_extension_handlers()

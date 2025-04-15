@@ -9,7 +9,6 @@ import disnake
 
 from src import config, log
 from src.bot import Bot
-from src.config import Client
 
 logger = log.get_logger(__name__)
 _intents = disnake.Intents.all()
@@ -35,12 +34,12 @@ async def main() -> None:
         logger.info("Bot is starting.")
         if os.name != "nt":
             loop = asyncio.get_event_loop()
-            future = asyncio.ensure_future(bot.start(Client.token or ""), loop=loop)
+            future = asyncio.ensure_future(bot.start(config.Client.token or ""), loop=loop)
             loop.add_signal_handler(signal.SIGINT, lambda: future.cancel())
             loop.add_signal_handler(signal.SIGTERM, lambda: future.cancel())
             await future
         else:
-            await bot.start(Client.token or "")
+            await bot.start(config.Client.token or "")
     except (asyncio.CancelledError, KeyboardInterrupt):
         logger.warning("Kill command received. Bot is closed.")
         if not bot.is_closed():

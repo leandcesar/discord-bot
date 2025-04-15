@@ -1,4 +1,5 @@
 import asyncio
+import re
 
 import disnake
 from disnake.ext import commands
@@ -11,6 +12,8 @@ from src.util.persistent_dict import PersistentDict
 from src.util.webhook import application_webhook
 
 plugin = Plugin[Bot]()
+
+DISCORD_MESSAGE_REGEX = re.compile(r"https://discord\.com/channels/([0-9]+)/([0-9]+)/([0-9]+)")
 
 
 @plugin.load_hook()
@@ -51,7 +54,7 @@ async def _alias_command(
 ) -> None:
     if inter.author.id not in plugin.bot.alias_data:
         plugin.bot.alias_data[inter.author.id] = {}
-    plugin.bot.alias_data[inter.author.id][alias_name] = content.replace(".mp4", ".gif")
+    plugin.bot.alias_data[inter.author.id][alias_name] = content
     await plugin.bot.reply(inter, f'atalho "{alias_name}" criado')
 
 
@@ -148,7 +151,7 @@ async def alias_message_command(inter: disnake.MessageCommandInteraction, messag
 
     alias_name = modal_inter.text_values["alias_name"]
     await modal_inter.response.defer(ephemeral=True)
-    await _alias_command(modal_inter, alias_name=alias_name, content=message.content)
+    await _alias_command(modal_inter, alias_name=alias_name, content=message.jump_url)
 
 
 @plugin.listener("on_message")
@@ -159,11 +162,22 @@ async def on_message(message: disnake.Message) -> None:
         return None
     if message.content not in plugin.bot.alias_data[str(message.author.id)]:
         return None
+    content = plugin.bot.alias_data[str(message.author.id)][message.content]
+    files = []
+    discord_message = DISCORD_MESSAGE_REGEX.match(content)
+    if discord_message:
+        channel_id = discord_message.group(2)
+        message_id = discord_message.group(3)
+        channel = await plugin.bot.fetch_channel(channel_id)
+        original_message = await channel.fetch_message(message_id)
+        content = original_message.content
+        files = [await attachment.to_file() for attachment in original_message.attachments]
     webhook = await application_webhook(plugin.bot, message.channel)
     await webhook.send(
-        plugin.bot.alias_data[str(message.author.id)][message.content],
+        content,
         username=message.author.display_name,
         avatar_url=message.author.display_avatar.url,
+        files=files,
     )
     await message.delete()
 

@@ -40,6 +40,7 @@ class PersistentDict(dict):  # noqa: N801
         self._save()
 
     def __getitem__(self, key: object) -> t.Any:
+        self._save()
         if super().__contains__(key):
             return super().__getitem__(key)
         if isinstance(key, int) and super().__contains__(str(key)):

@@ -63,7 +63,7 @@ async def _color_command(
 
 
 @commands.check(member_has_color_role)
-@plugin.command(name="color", aliases=["cor"], description="Change the color of your username on the server.")
+@plugin.command(name="color", aliases=["cor"], description="Change your color (top role color) on the server.")
 async def color_prefix_command(
     ctx: commands.Context[Bot],
     hex: HEX | None = None,
@@ -79,7 +79,7 @@ async def color_slash_command(
     attachment: disnake.Attachment = commands.Param(lambda inter: inter.author.display_avatar),
 ) -> None:
     """
-    Change the color of your username on the server.
+    Change your color (top role color) on the server.
 
     Parameters
     ----------
@@ -124,7 +124,7 @@ async def _badge_command(
 
 @commands.check(member_has_badge_role)
 @commands.check(guild_has_role_icons)
-@plugin.command(name="badge", description="Change your badge on the server.")
+@plugin.command(name="badge", description="Change your badge (top role icon) on the server.")
 async def badge_prefix_command(
     ctx: commands.Context[Bot],
     emote: Emote | None = None,
@@ -142,7 +142,7 @@ async def badge_slash_command(
     attachment: disnake.Attachment | None = None,
 ) -> None:
     """
-    Change your badge on the server.
+    Change your badge (top role icon) on the server.
 
     Parameters
     ----------

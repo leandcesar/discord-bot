@@ -4,11 +4,17 @@ from disnake.ext.commands.errors import BadArgument, CommandError
 from disnake_plugins import Plugin
 
 from src import log
-from src.bot import Bot
+from src.bot import Bot as _Bot
 from src.util.webhook import application_webhook
 
-logger = log.get_logger(__name__)
+
+class Bot(_Bot):
+    deleted_messages: list[disnake.Message]
+    edited_messages: list[disnake.Message]
+
+
 plugin = Plugin[Bot]()
+logger = log.get_logger(__name__)
 
 
 @plugin.load_hook()

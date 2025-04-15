@@ -26,7 +26,7 @@ class Palette:
         colors: list[HEX] = []
         for (r, g, b), count in pixels_counts.most_common():
             if not any(cls.color_distance((r, g, b), color.rgb) < 15 for color in colors):
-                color = HEX(r, g, b)
+                color = HEX(f"{r:02x}{g:02x}{b:02x}")
                 colors.append(color)
             if len(colors) >= top_n:
                 break

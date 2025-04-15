@@ -5,8 +5,13 @@ from disnake.ext import commands
 from disnake_plugins import Plugin
 
 from src import config
-from src.bot import Bot
+from src.bot import Bot as _Bot
 from src.util.persistent_dict import PersistentDict
+
+
+class Bot(_Bot):
+    afk_data: PersistentDict
+
 
 plugin = Plugin[Bot]()
 
@@ -53,7 +58,7 @@ async def on_message(message: disnake.Message) -> None:
         return None
     if message.author.id in plugin.bot.afk_data:
         timestamp = plugin.bot.afk_data.pop(message.author.id)
-        await plugin.bot.reply(message, f"{config.Emoji.afk_turn_off} (<t:{timestamp}:R>)")
+        await plugin.bot.reply(message, f"{config.Emoji.afk_turn_off} (<t:{timestamp}:R>)", mention_author=False)
 
 
 setup, teardown = plugin.create_extension_handlers()
