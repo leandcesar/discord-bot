@@ -111,7 +111,7 @@ class Bot(commands.Bot):
             sender = inter.edit_original_response if inter.response.is_done() else inter.send
         else:
             sender = inter.send
-        logger.debug(f"{content!r}", extra={"inter": inter})
+        logger.info(f"{content!r}", extra={"inter": inter})
         return await sender(content, **kwargs)
 
     async def get_or_fetch_owners(self) -> list[disnake.User]:

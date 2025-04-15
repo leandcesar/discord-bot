@@ -8,6 +8,41 @@
 
 ______________________________________________________________________
 
+# Features
+
+## Commands
+
+Slash and prefix commands:
+- `/afk` (`+afk`): Let others know you're AFK (Away From Keyboard).
+- `/alias add` (`+alias`): Create a custom alias for quick reuse.
+- `/alias list` (`+aliases`): Display a list of your saved aliases.
+- `/alias remove` (`+unalias`): Remove a saved alias.
+- `/avatar` (`+avatar`): Display the specified member's avatar(s).
+- `/badge` (`+badge`): Change your badge (top role icon) on the server.
+- `/banner` (`+banner`): Display the specified member's banner.
+- `/color` (`+color`, `+cor`): Change your color (top role color) on the server.
+- `/emote add`: Add a custom emote to the server.
+- `/emote remove`: Remove a custom emote from the server.
+- `/emote rename`: Rename a custom emote in the server.
+- `/fake`: Send a message impersonating another user in the current channel.
+- `/remind` (`+remind`, `+remindme`): Set a reminder for yourself or others.
+- `/server` banner (`+serverbanner`): Display the guild's banner.
+- `/server` icon (`+servericon`, `+server`): Display the guild's icon.
+- `/snipe` (`+snipe`): Restore the last deleted message in the current channel.
+- `/sticker add`: Add a sticker to the server.
+- `/sticker remove`: Remove a sticker from the server.
+- `/sticker rename`: Rename a sticker in the server.
+- `/summarize` (`+summarize`, `+resumo`): Summarize the recent conversation in the chat.
+- `/weather` (`+weather`, `+w`, `+clima`): Retrieve the current weather for a specified city.
+
+## Listeners
+
+These features run automatically, without user commands:
+- Automatically transcribes voice messages (speech-to-text).
+- Automatically downloads tracks from Spotify links.
+- Automatically fixes Twitter/X and Instagram link previews.
+- Automatically evaluates simple math expressions.
+
 # Getting Started
 
 ## Prerequisites
@@ -130,5 +165,7 @@ make uninstall
 # References
 
 - [disnake](https://docs.disnake.dev/en/stable/): asynchronous Discord API wrapper for Python
+- [disnake-ext-plugins](https://github.com/DisnakeCommunity/disnake-ext-plugins): plugin extension for disnake providing a alternative to cogs
 - [AIOHTTP](https://docs.aiohttp.org/en/stable/): asynchronous HTTP Client/Server for Python
-- [Pillow (PIL Fork)](https://pillow.readthedocs.io/en/stable/): imaging library for Python
+- [Pillow (PIL Fork)](https://pillow.readthedocs.io/en/stable/): Python Imaging Library
+- [spotDL](https://spotdl.io/docs/): Spotify music downloader

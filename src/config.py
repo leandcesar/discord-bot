@@ -15,7 +15,7 @@ if t.TYPE_CHECKING:
     from disnake import Permissions
 
 try:
-    import dotenv
+    import dotenv  # type: ignore
 except ModuleNotFoundError:
     pass
 else:
@@ -74,6 +74,7 @@ class File:
     afk = os.path.join(path, "afk.json")
     alias = os.path.join(path, "alias.json")
     reminder = os.path.join(path, "reminder.json")
+    weather = os.path.join(path, "weather.json")
 
 
 class Emoji:
@@ -81,6 +82,7 @@ class Emoji:
     afk_turn_off = "🔔"
     remind_created = "📅"
     remind_delivered = "⏰"
+    loading = os.getenv("EMOJI_LOADING", "⌛")
 
 
 def generate_startup_table(bot_name: str, bot_id: int) -> str:
