@@ -36,7 +36,7 @@ class LoggingFormatter(logging.Formatter):
         return formatter.format(record)
 
 
-class ContextFilter(logging.Filter):
+class InteractionFilter(logging.Filter):
     def filter(self, record: logging.LogRecord) -> bool:
         context = ""
         if hasattr(record, "inter"):
@@ -51,16 +51,16 @@ class ContextFilter(logging.Filter):
 
 
 formatter = LoggingFormatter()
-context_filter = ContextFilter()
+interaction_filter = InteractionFilter()
 
 logger = logging.getLogger()
 logger.setLevel(config.Log.level)
-logger.addFilter(context_filter)
+logger.addFilter(interaction_filter)
 
 stdout_handler = logging.StreamHandler()
 stdout_handler.setLevel(config.Log.level)
 stdout_handler.setFormatter(formatter)
-stdout_handler.addFilter(context_filter)
+stdout_handler.addFilter(interaction_filter)
 logger.addHandler(stdout_handler)
 
 logging.getLogger("disnake").setLevel(logging.WARNING)

@@ -64,6 +64,12 @@ class PersistentDict(dict):  # noqa: N801
         super().update(*args, **kwargs)
         self._save()
 
+    def get(self, key: object, default: t.Any = None) -> t.Any:
+        try:
+            return self.__getitem__(key)
+        except KeyError:
+            return default
+
     def pop(self, key: object, default: t.Any = None) -> t.Any:
         if key in self:
             value = self[key]

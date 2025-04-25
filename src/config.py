@@ -25,7 +25,7 @@ else:
 
 class Client:
     prefix = os.getenv("BOT_PREFIX", "%")
-    owner_ids: tuple[int, ...] = ()  # User: { id }
+    owner_ids: tuple[int, ...] = tuple(json.loads(os.getenv("OWNER_IDS", "[]")))  # User: { id }
     test_guilds: tuple[int, ...] = tuple(json.loads(os.getenv("TEST_GUILDS", "[]")))  # Guild: { id }
     token: str | None = os.getenv("TOKEN")
 
@@ -78,10 +78,10 @@ class File:
 
 
 class Emoji:
-    afk_turn_on = "🔕"
-    afk_turn_off = "🔔"
-    remind_created = "📅"
-    remind_delivered = "⏰"
+    afk_turn_on = os.getenv("EMOJI_AFK_TURN_ON", "🔕")
+    afk_turn_off = os.getenv("EMOJI_AFK_TURN_OFF", "🔔")
+    remind_created = os.getenv("EMOJI_REMIND_CREATED", "📅")
+    remind_delivered = os.getenv("EMOJI_REMIND_DELIVERED", "⏰")
     loading = os.getenv("EMOJI_LOADING", "⌛")
 
 

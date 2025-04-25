@@ -11,12 +11,12 @@ from src import config, log
 from src.bot import Bot
 
 logger = log.get_logger(__name__)
-_intents = disnake.Intents.all()
+intents = disnake.Intents.all()
 
 
 async def main() -> None:
     bot = Bot(
-        intents=_intents,
+        intents=intents,
         prefix=config.Client.prefix,
         owner_ids=set(config.Client.owner_ids),
         reload=config.Client.reload,
