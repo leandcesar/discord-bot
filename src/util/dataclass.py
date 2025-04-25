@@ -4,7 +4,7 @@ from dataclasses import fields, is_dataclass
 T = t.TypeVar("T")
 
 
-def to_instance(data: dict, cls: type[T]) -> T:
+def to_instance(data: dict[str, t.Any], cls: type[T]) -> T:
     if not is_dataclass(cls):
         raise TypeError(f"{cls.__name__} is not a dataclass.")
     class_fields = {f.name for f in fields(cls)}
