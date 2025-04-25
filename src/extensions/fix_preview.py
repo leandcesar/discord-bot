@@ -1,5 +1,4 @@
 import re
-from functools import reduce
 
 import disnake
 from disnake_plugins import Plugin
@@ -8,31 +7,41 @@ from src.bot import Bot
 
 plugin = Plugin[Bot]()
 
-INSTAGRAM_URL_REGEX = re.compile(r"https?://(?:www\.)?instagram\.com/\S+/\S+")
-TWITTER_URL_REGEX = re.compile(r"https?://(?:www\.)?twitter\.com/\S+status/\S+")
-X_URL_REGEX = re.compile(r"https?://(?:www\.)?x\.com/\S+status/\S+")
+URL_REGEXES = {
+    "instagram.com": re.compile(
+        r"\b(?P<scheme>https?://)(?:www\.)?(?P<domain>instagram\.com)(?P<path>/[\w\.-]+/[\w\.-]+)"
+    ),
+    "twitter.com": re.compile(
+        r"\b(?P<scheme>https?://)(?:www\.)?(?P<domain>twitter\.com)(?P<path>/[\w\.-]+/status/\d+)"
+    ),
+    "x.com": re.compile(r"\b(?P<scheme>https?://)(?:www\.)?(?P<domain>x\.com)(?P<path>/[\w\.-]+/status/\d+)"),
+}
+
+DOMAIN_REPLACEMENTS = {
+    "instagram.com": "instagramez.com",
+    "twitter.com": "fxtwitter.com",
+    "x.com": "fxtwitter.com",
+}
 
 
-def find_urls(text: str) -> list[str]:
-    urls = []
-    for regex in (INSTAGRAM_URL_REGEX, TWITTER_URL_REGEX, X_URL_REGEX):
-        urls.extend(regex.findall(text))
-    return urls
-
-
-def replace_all(texts: list[str], *olds_news: tuple[str, str]) -> list[str]:
-    return [reduce(lambda t, pair: t.replace(*pair), olds_news, text) for text in texts]
+def find_and_replace_urls(text: str) -> list[str]:
+    new_urls = []
+    for domain, regex in URL_REGEXES.items():
+        for match in regex.finditer(text):
+            scheme = match.group("scheme")
+            path = match.group("path")
+            new_domain = DOMAIN_REPLACEMENTS[domain]
+            new_urls.append(f"{scheme}{new_domain}{path}")
+    return new_urls
 
 
 @plugin.listener("on_message")
 async def on_message(message: disnake.Message) -> None:
     if message.author.bot:
         return None
-    content = message.content
-    urls = find_urls(content)
+    urls = find_and_replace_urls(message.content)
     if not urls:
         return None
-    urls = replace_all(urls, ("instagram.com", "instagramez.com"), ("twitter", "fxtwitter"), ("x", "fxtwitter"))
     content = "\n".join(urls)
     await message.edit(suppress_embeds=True)
     await plugin.bot.reply(message, content, mention_author=False)
