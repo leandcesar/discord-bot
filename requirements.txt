@@ -1,4 +1,4 @@
-aiohttp==3.11.12
+aiohttp==3.12.14
 disnake==2.10.1
 pillow==11.1.0
 git+https://github.com/DisnakeCommunity/disnake-ext-plugins
